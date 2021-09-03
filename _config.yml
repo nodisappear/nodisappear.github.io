@@ -104,6 +104,5 @@ theme: next
 deploy:
   type: 'git'
   repo: 
-    github: 'git@github.com:nodisappear/nodisappear.github.io.git'
-    coding: 'git@e.coding.net:xinanxiaozhan/blog/nodisappear.git'
-  branch: main
+    github: 'git@github.com:nodisappear/nodisappear.github.io.git',main
+    coding: 'git@e.coding.net:xinanxiaozhan/blog/nodisappear.git',main
