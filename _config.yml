@@ -97,12 +97,12 @@ ignore:
 # Extensions
 ## Plugins: https://hexo.io/plugins/
 ## Themes: https://hexo.io/themes/
-theme: next
+theme: snippet
 
 # Deployment
 ## Docs: https://hexo.io/docs/one-command-deployment
 deploy:
-  type: 'git'
+  type: git
   repo: 
-    github: 'git@github.com:nodisappear/nodisappear.github.io.git',main
-    coding: 'git@e.coding.net:xinanxiaozhan/blog/nodisappear.git',main
+    github: git@github.com:nodisappear/nodisappear.github.io.git,master
+    coding: git@e.coding.net:xinanxiaozhan/blog/nodisappear.git,master
