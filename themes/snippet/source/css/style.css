@@ -241,8 +241,8 @@ pre {
   line-height: 0;
   height: 180px;
   width: 100%;
-  background: #fff url(http://7xpw2b.com1.z0.glb.clouddn.com/hexo-sinppet/img/banner.jpg);
-  background-repeat: repeat;
+  background-repeat: no-repeat;
+  background-size: cover;
   overflow: hidden;
 }
 .main-header .banneriframe {
@@ -256,8 +256,8 @@ pre {
   padding-top: 30px;
 }
 .main-header .main-header-box a.header-avatar img {
-  width: 82px;
-  height: 82px;
+  width: 112px;
+  height: 112px;
   max-width: 100%;
   border-radius: 50%;
 }
