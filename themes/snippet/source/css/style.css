@@ -1101,13 +1101,12 @@ pre {
    copyright
 ====================================================*/
 .copyright {
-  background: #111;
   font-size: 13px;
   text-align: center;
   color: #666666;
   padding-top: 20px;
   padding-bottom: 20px;
-  border-top: 1px solid #303030;
+  border-top: 2px solid #ffffff;
 }
 .copyright span {
   margin: 0 0.5em;
