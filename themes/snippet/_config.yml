@@ -11,15 +11,18 @@ menu:
   - page: 首页
     url: /
     icon:
-  - page: 前端
-    url: /categories/前端/
+  - page: 分类
+    url: /categories/
     icon:
-  - page: 时间轴
+  - page: 标签
+    url: /tags/
+    icon:
+  - page: 归档
     url: /archives/
     icon:
 
 ## favicon
-favicon: /favicon.ico
+favicon: "./img/page-favicon.jpg"
 
 ## Feed
 rss: /atom.xml
@@ -34,12 +37,12 @@ carousel:
 ## widgets
 widgets:
   - search
-  - notification
-  - social
+  # - notification
   - category
-  - archive
   - tagcloud
-  - friends
+  - archive
+  - social
+  # - friends
 
 ## 搜索
 jsonContent:
@@ -64,22 +67,7 @@ notification: |-
 social:
   - name: Github
     icon: git
-    href: //github.com/shenliyang
-  - name: 邮箱
-    icon: envelope-o
-    href: mailto:snippet@91h5.cc
-  - name: 联系QQ
-    icon: qq
-    href: /
-  - name: 微信
-    icon: weixin
-    href: /
-  - name: QQ群
-    icon: users
-    href: /
-  - name: RSS
-    icon: feed
-    href: /atom.xml
+    href: //github.com/nodisappear
 
 ## 文章分类设置
 cate_config:
@@ -124,7 +112,7 @@ banner:
   img: "./img/head-back.jpg"
 
 ## 首页列表底部面板
-homePanel: true
+homePanel: false
 
 ## 缩略图自定义随机图片
 defaultImgs:
@@ -155,7 +143,7 @@ declaration:
   enable: true
   title: "转载声明"
   tip: |-
-    商业转载请联系作者获得授权,非商业转载请注明出处 © <a href="" target="_blank">Snippet</a>
+    商业转载请联系作者获得授权,非商业转载请注明出处 © <a href="#">XinAnXiaoZhan</a>
 
 ## 文章打赏
 reward:
@@ -168,7 +156,7 @@ reward:
 ## utterances评论
 utterances:
   enable: true
-  repo: shenliyang/snippet-comment
+  repo: nodisappear/XinAnXiaoZhan
   issueTerm: pathname
   issueNumber: 
   theme: github-light

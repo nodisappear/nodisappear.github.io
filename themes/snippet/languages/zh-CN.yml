@@ -1,7 +1,7 @@
 categories: 分类
 search: 搜索
 tags: 标签
-tagcloud: 标签云
+tagcloud: 标签
 tweets: 推文
 prev: 上一页
 next: 下一页
@@ -17,7 +17,7 @@ rss_feed: RSS
 rss: RSS
 category: 分类
 tag: 标签
-social: 社交
+social: 关于
 friend_links: 友链
 read_more: 阅读全文
 home: 首页
@@ -25,7 +25,7 @@ about: 关于我
 archives: 归档
 search_local: 站内搜索
 search_google: 谷歌搜索
-search_placeholder: 搜点什么呢？
+search_placeholder: 关键词
 author: 作者
 date: 发表日期
 update: 最后编辑日期

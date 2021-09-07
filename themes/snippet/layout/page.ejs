@@ -1,8 +1,7 @@
 <div>
     <%if(page.title=='tags' || page.type=='tags'){%>
     <article class="post">
-        <h1 class="post-head">共计
-            <%- site.tags.length%>个标签</h1>
+        <h3 class="post-head">共计<%- site.tags.length%>个标签</h3>
         <div class="post-body">
             <div class="widget">
                 <div class="content tag-cloud">
@@ -13,8 +12,7 @@
     </article>
     <% } else if(page.title=='categories' || page.type=='categories') { %>
     <article class="post">
-        <h1 class="post-head">共计
-            <%- site.categories.length%>个分类</h1>
+        <h3 class="post-head">共计<%- site.categories.length%>个分类</h3>
         <div class="post-body">
             <% site.categories.forEach(function (item) {%>
             <li class="post-items">
