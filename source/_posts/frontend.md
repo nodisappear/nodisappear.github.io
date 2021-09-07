@@ -12,3 +12,4 @@ date: 2021-09-06 14:09:41
 ## 插件
 [hexo添加永久链接之abbrlink](http://www.adanblog.com/hexo/6962f19.html/)
 [hexo添加搜索功能之hexo-generator-json-content](https://github.com/alexbruno/hexo-generator-json-content)
+[hexo添加评论功能之utterances](https://blog.csdn.net/qq_41684621/article/details/104131280/)
