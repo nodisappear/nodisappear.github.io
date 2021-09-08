@@ -1318,17 +1318,23 @@ pre {
 }
 @media screen and (max-width: 500px) {
   .timebox {
-    background-position: 110px 0;
+    background-position: 109px 0;
   }
   .timeline h2 {
     padding-left: 0;
-    background-position: 74px 0;
+    background-position: 76px 0;
+    height: 40px;
+    line-height: 40px;
+    background-size: contain;
   }
   .timeline ul li {
     background-position: 88px 5px;
   }
+  .timeline ul li a {
+    padding-left: 50px;
+  }
   .timeline ul li h3 {
-    width: 68px;
+    width: 70px;
     padding-right: 0;
   }
 }
