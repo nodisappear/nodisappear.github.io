@@ -1603,9 +1603,6 @@ pre .javascript .function {
 }
 
 /* 新增 */
-.container {
-  width: 1680px;
-}
 .article-container-href:hover {
   text-decoration: none;
 }

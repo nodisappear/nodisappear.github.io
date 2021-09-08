@@ -1,5 +1,5 @@
 <div>
-    <%if(page.title=='tags' || page.type=='tags'){%>
+    <%if(page.title=='标签' || page.type=='tags'){%>
     <article class="post">
         <h3 class="post-head">共计<%- site.tags.length%>个标签</h3>
         <div class="post-body">
@@ -10,7 +10,7 @@
             </div>
         </div>
     </article>
-    <% } else if(page.title=='categories' || page.type=='categories') { %>
+    <% } else if(page.title=='分类' || page.type=='categories') { %>
     <article class="post">
         <h3 class="post-head">共计<%- site.categories.length%>个分类</h3>
         <div class="post-body">
@@ -23,7 +23,14 @@
             <%})%>
         </div>
     </article>
+    <% } else if(page.title=='关于' || page.type=='about') { %>
+    <article class="post">
+        <h3 class="post-head">联系</h3>
+        <div class="post-body">
+            <a href="https://github.com/nodisappear">GitHub</a>
+        </div>
+    </article>
     <% } else{ %>
-    <%- partial('_partial/article', {post: page, index: false}) %>
+        <%- partial('_partial/article', {post: page, index: false}) %>
     <%}%>
 </div>
