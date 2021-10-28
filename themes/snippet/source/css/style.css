@@ -322,6 +322,9 @@ pre {
 .main-navigation .menu li:hover > a {
   color: #87A866;
   text-decoration: none;
+} 
+.main-navigation .menu li.active a{
+    color: #87A866;
 }
 .main-navigation .menu li:hover ul {
   visibility: visible;

@@ -128,4 +128,20 @@ window.onload = function () {
       }
     });
   };
+
+  //选中菜单添加样式
+  const $menus = document.getElementsByClassName("menus");
+  const currentMenuIndex = sessionStorage.getItem('menuIndex');
+  if(currentMenuIndex){
+    $menus[currentMenuIndex].className = "text-center menus active";
+  }else{
+    $menus[0].className = "text-center menus active";
+  }
+  for(let i=0;i<$menus.length;i++) {
+    (()=>{
+        $menus[i].onclick = function (e) {
+            sessionStorage.setItem('menuIndex', i);
+        }
+    })(i)
+  }
 };
