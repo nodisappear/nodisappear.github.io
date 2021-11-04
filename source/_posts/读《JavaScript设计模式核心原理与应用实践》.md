@@ -174,5 +174,129 @@ date: 2021-11-03 16:18:10
   &emsp;2. 抽象工厂目前在JS中应用得并不广泛，需要留意三点：(1) 学会用ES6模拟Java中的抽象类；(2) 了解抽象工厂模式中四个角色的定位和作用；(3) 理解“开放封闭”设计原则，知道它的好用之处和执行之必要性。
 
 ## 创建型：单例模式 —— Vuex的数据管理哲学
-  &ensp;**保证一个类仅有一个实例，并提供一个访问它的全局访问点 —— 不管尝试创建多少次，都只返回第一次创建的唯一实例**
+### 一. 单例模式的实现思路
+  &ensp;**保证一个类仅有一个实例，并提供一个访问它的全局访问点 —— 不管尝试创建多少次，都只返回第一次创建的实例**
+  
+  &ensp;构造函数需要具备判断自己是否已经创建过一个实例的能力
+  ```javascript
+  // 1.判断逻辑写在静态方法中
+  class SingleDog {
+    constructor() {
+      this.instance = null
+    }
+    static getInstance() { 
+      if (!this.instance) {
+        this.instance = new SingleDog()
+      }
+      return this.instance
+    }
+  }
+  const s1 = SingleDog.getInstance()
+  const s2 = SingleDog.getInstance()
+  
+  // 2.判断逻辑写在闭包中
+  function SingleDog() {}
+  const getInstance = (function() {
+    let instance = null
+    return function() {
+      if(!instance) {
+        instance = new SingleDog()
+      }
+      return instance
+    }
+  })()
+  const s1 = getInstance()
+  const s2 = getInstance()
 
+ // s1和s2都指向唯一的实例 
+ s1 === s2 // true
+  ```
+### 二. 生产实践：Vuex中的单例模式
+  **理解Vuex中的Store**
+  1. 引入Vuex插件
+  ```javascript
+  import Vue from 'vue'
+  import Vuex from 'vuex'
+
+  Vue.use(Vuex)    
+  ```
+  - Vue.use源码
+  ```javascript
+  // 截取参数
+  function toArray (list: any, start?: number): Array<any> {
+    start = start || 0
+    let i = list.length - start
+    const ret: Array<any> = new Array(i)
+    while (i--) {
+      ret[i] = list[i + start]
+    }
+    return ret
+  }
+  // 注册插件
+  export function initUse (Vue: GlobalAPI) {
+    Vue.use = function (plugin: Function | Object) {
+      const installedPlugins = (this._installedPlugins || (this._installedPlugins = [])) // 已安装插件列表
+      if (installedPlugins.indexOf(plugin) > -1) { // 防止重复注册
+        return this
+      }
+
+      const args = toArray(arguments, 1)
+      args.unshift(this)
+      if (typeof plugin.install === 'function') { // 如果插件是一个对象，必须提供install方法
+        plugin.install.apply(plugin, args)
+      } else if (typeof plugin === 'function') { // 如果插件是一个函数，它会被直接当作install方法
+        plugin.apply(null, args)
+      }
+      installedPlugins.push(plugin) 
+      return this
+    }
+  }
+  ```
+  - Vuex install源码
+  ```javascript
+  let vue; // instance
+  function install (_Vue) {
+    if (Vue && _Vue === Vue) { // 判断传入的Vue实例对象是否已经被install过Vuex插件
+      if (__DEV__) {
+        console.error(
+          '[vuex] already installed. Vue.use(Vuex) should be called only once.'
+        )
+      }
+      return
+    }
+    Vue = _Vue // 若没有，为该Vue实例对象install一个唯一的Vuex
+    applyMixin(Vue) // 将Vuex的初始化逻辑写进Vue的钩子函数里
+  }
+  // applyMixin(Vue)
+  function vuexInit () {
+    const options = this.$options // 当前Vue实例的初始化选项
+    if (options.store) { // 根实例有store
+      this.$store = typeof options.store === 'function'
+        ? options.store()
+        : options.store
+    } else if (options.parent && options.parent.$store) { // 根实例没有store，就找父节点的store
+      this.$store = options.parent.$store
+    }
+  }
+  Vue.mixin({ beforeCreate: vuexInit }) // 全局混入
+  ```
+  2. 创建store
+  ```javascript
+  const store = new Vuex.Store({
+    state: {},
+    mutations: {},
+    actions: {},
+    modules: {}
+  })
+  ```
+  3. 将store注入到Vue实例中
+  ```javascript
+  new Vue({
+    el: '#app',
+    store
+  })
+  ```
+
+## 参考链接
+  1. [vue.use()方法从源码到使用](https://juejin.cn/post/6844903842035793928)  
+  2. [vuex实现原理](https://blog.csdn.net/qq_14993375/article/details/103981954)
