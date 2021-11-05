@@ -297,6 +297,78 @@ date: 2021-11-03 16:18:10
   })
   ```
 
+## 创建型：原型模式 —— 谈Prototype无小事
+  &ensp;**生成指定深度和广度的对象**
+  ```javascript
+  function createData(deep, breadth) {
+    var data = {};
+    var temp = data;
+
+    for (var i = 0; i < deep; i++) {
+      temp = temp['data'] = {};
+      for (var j = 0; j < breadth; j++) {
+          temp[j] = j;
+      }
+    }
+
+    return data;
+  }
+
+  // 1层深度，每层有3个数据
+  createData(1, 3); // {data: {0: 0, 1: 1, 2: 2}}
+  // 3层深度，每层有0个数据
+  createData(3, 0); // {data: {data: {data: {}}}}
+  ```
+  &ensp;**浅拷贝 —— 一层拷贝**
+  ```javascript
+  function shallowClone(source){
+    var target = {};
+    for(var i in source) {
+      if(source.hasOwnProperty(i)) {
+        target[i] = source[i];
+      }
+    } 
+
+    return target;
+  }
+  ```
+  &ensp;**深拷贝 —— 无限层级拷贝**
+  ```javascript
+  // 扩展shallowClone
+  // 存在问题：1.未检验参数；2.判断对象的逻辑不严谨；3.未考虑array、set、map、weakset、weakmap的兼容
+  function deepClone(source){
+    var target = {};
+    for(var i in source) { 
+      if(source.hasOwnProperty(i)) {
+        if (typeof source[i] === 'object') { 
+          target[i] = deepClone(source[i]);
+        } else {
+          target[i] = source[i];
+        }
+      }
+    } 
+
+    return target;
+  }
+
+  // 递归，栈溢出
+  deepClone(createData(10000)); // Maximum call stack size exceeded
+  // 循环引用，栈溢出
+  let data = {};
+  data.data = data;
+  deepClone(data);
+
+  // 1.判断对象
+  function isObject(x) {
+    // 与typeof相比，能够区分null、array: typeof null === 'object'; typeof [1,2,3] === 'object'
+    // 与toString()相比，调用的不是Object对象实例重写的方法而是Object原型对象的方法: [1,2,3].toString() === '1,2,3'; Object.prototype.toString.call([1,2,3]) === '[object Array]'
+    // 不能准确判断自定义对象: function func() {}; Object.prototype.toString.call(new func()) === '[object Object]';
+    return Object.prototype.toString.call(x) === '[object Object]';
+  }
+  ```
+
 ## 参考链接
   1. [vue.use()方法从源码到使用](https://juejin.cn/post/6844903842035793928)  
   2. [vuex实现原理](https://blog.csdn.net/qq_14993375/article/details/103981954)
+  3. [深拷贝的终极探索（99%的人都不知道）](https://segmentfault.com/a/1190000016672263)
+  4. [用Object.prototype.toString.call(obj)检测对象类型原因分析](https://www.jb51.net/article/148604.htm)
