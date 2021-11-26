@@ -7,368 +7,518 @@ abbrlink: 806a46bc
 date: 2021-11-03 16:18:10
 ---
 
-[掘金小册——JavaScript设计模式核心原理与应用实践](https://juejin.cn/book/6844733790204461070)
+[掘金小册——JavaScript 设计模式核心原理与应用实践](https://juejin.cn/book/6844733790204461070)
 
 ## 开篇：前端工程师的成长论
+
 ### 一. 软件工程师的核心竞争力
-  &ensp;**驾驭技术的能力**
-  1. 能用健壮的代码解决具体问题
-  2. 能用抽象的思维应对复杂系统
-  3. 能用工程化思想规划大型业务
- 
+
+&ensp;**驾驭技术的能力**
+
+1. 能用健壮的代码解决具体问题
+2. 能用抽象的思维应对复杂系统
+3. 能用工程化思想规划大型业务
+
 ## 设计模式的“道”与“术”
+
 ### 一. 设计模式的指导理论
-  &ensp;**SOLID设计原则**
-  1. *单一职责 [单一功能]
-  2. *开放封闭 —— 对扩展开放，对修改封闭
-     - 类、模块、函数等软件实体可以扩展，但不可以修改
-  3. 李式置换 [里式替换]
-  4. 接口独立 [接口隔离]
-  5. 依赖导致 [依赖反转]
+
+&ensp;**SOLID 设计原则**
+
+1. \*单一职责 [单一功能]
+2. \*开放封闭 —— 对扩展开放，对修改封闭
+   - 类、模块、函数等软件实体可以扩展，但不可以修改
+3. 李式置换 [里式替换]
+4. 接口独立 [接口隔离]
+5. 依赖导致 [依赖反转]
 
 ### 二. 设计模式的核心思想
-  &ensp;**封装变化**
-  
-  &ensp;观察整个逻辑里面的变与不变并分离它们，使变化的部分灵活而不变的部分稳定
- 
-### 三. 23种设计模式
-  &ensp;**创建型 —— 封装创建对象过程中的变化**
-  1. 单例模式
-  2. 原型模式
-  3. 构造器模式
-  4. 工厂模式
-  5. 抽象工厂模式　
-  
-  &ensp;**结构型 —— 封装对象之间组合方式的变化**
-  1. 桥接模式
-  2. 外观模式
-  3. 组合模式
-  4. 装饰器模式
-  5. 适配器模式
-  6. 代理模式
-  7. 享元模式
 
-  &ensp;**行为型 —— 封装对象千变万化的行为**
-  1. 迭代器模式
-  2. 解释器模式
-  3. 观察者模式
-  4. 中介者模式
-  5. 访问者模式
-  6. 状态模式
-  7. 备忘录模式
-  8. 策略模式
-  9. 模板方法模式
-  10. 职责链模式
-  11. 命令模式
- 
+&ensp;**封装变化**
+
+&ensp;观察整个逻辑里面的变与不变并分离它们，使变化的部分灵活而不变的部分稳定
+
+### 三. 23 种设计模式
+
+&ensp;**创建型 —— 封装创建对象过程中的变化**
+
+1. 单例模式
+2. 原型模式
+3. 构造器模式
+4. 工厂模式
+5. 抽象工厂模式
+
+&ensp;**结构型 —— 封装对象之间组合方式的变化**
+
+1. 桥接模式
+2. 外观模式
+3. 组合模式
+4. 装饰器模式
+5. 适配器模式
+6. 代理模式
+7. 享元模式
+
+&ensp;**行为型 —— 封装对象千变万化的行为**
+
+1. 迭代器模式
+2. 解释器模式
+3. 观察者模式
+4. 中介者模式
+5. 访问者模式
+6. 状态模式
+7. 备忘录模式
+8. 策略模式
+9. 模板方法模式
+10. 职责链模式
+11. 命令模式
+
 ## 创建型：工厂模式 —— 区分“变与不变”
 
 ### 一. 构造器模式
-  &ensp;**用构造函数初始化对象 —— 抽象不同对象实例之间的变与不变**
-  ```javascript
-  // 将赋值过程封装，确保每个对象具备 共性
-  function User(name , age, career) { 
-    this.name = name
-    this.age = age
-    this.career = career 
-  }
 
-  // 将取值操作开放，确保每个对象具备 个性
-  const user = new User('李雷', 25, 'coder'); 
-  ``` 
+&ensp;**用构造函数初始化对象 —— 抽象不同对象实例之间的变与不变**
+
+```javascript
+// 将赋值过程封装，确保每个对象具备 共性
+function User(name, age, career) {
+  this.name = name;
+  this.age = age;
+  this.career = career;
+}
+
+// 将取值操作开放，确保每个对象具备 个性
+const user = new User("李雷", 25, "coder");
+```
+
 ### 二. 简单工厂模式
-  &ensp;**将创建对象的过程单独封装 —— 抽象不同构造函数之间的变与不变**
-  ```javascript
-  function User(name , age, career, work) {
-    this.name = name
-    this.age = age
-    this.career = career 
-    this.work = work
-  }
 
-  // 将 承载共性的构造函数 和 承载个性的逻辑判断 写入同一函数
-  function Factory(name, age, career) { 
-    let work;
-    switch(career) {
-      case 'boss':
-        work = ['喝茶', '看报', '见客户']
-        break
-      case 'coder':
-        work =  ['写代码','写系分', '修Bug'] 
-        break
-    }
-    return new User('李雷', 25, 'coder')
-  }
-  ```
-  &ensp;**`重要提示：`**
-  &emsp;在写了大量构造函数、调用了大量new的情况下，就应该思考是不是可以用工厂模式重构代码了！
-### 三. 抽象工厂模式 
-  &ensp;**围绕一个超级工厂创建其他工厂 —— 遵循“开放封闭”设计原则**
-    
-  &ensp;将一个复杂场景中不同的类按性质划分为4个关键角色[1 - 4]：
-  
-  &nbsp;0. 超级工厂：拥有多个抽象工厂的系统 【电子厂】
-  1. 抽象工厂：抽象类，用于声明最终目标产品的共性，每个抽象工厂对应的一类产品称为“产品族” 【手机厂，电脑厂，...】
-  2. 具体工厂：继承自抽象工厂，用于生成产品族里的一类具体产品 【智能手机厂，非智能手机厂，...】
-  3. 抽象产品：抽象类，用于声明具体产品所依赖的细粒度产品的共性 【操作系统厂，硬件厂，...】
-  4. 具体产品： 继承自抽象产品，用于生成具体产品所依赖的细粒度产品 【安卓操作系统厂/苹果操作系统厂，小米硬件厂/高通硬件厂，...】
-  ```javascript
-  // 抽象工厂，定义手机的共性
-  class MobilePhoneFactory { 
-    createOS(){ // 提供操作系统的接口
-      throw new Error("抽象工厂方法不允许直接调用，你需要将我重写！")
-    }
-    createHardWare(){ // 提供硬件的接口
-      throw new Error("抽象工厂方法不允许直接调用，你需要将我重写！")
-    }
-  }
-  // 具体工厂，用于生成手机实例
-  class FakeStarFactory extends MobilePhoneFactory { 
-    createOS() { // 提供操作系统实例
-      return new AndroidOS()
-    }
-    createHardWare() { // 提供硬件实例
-      return new QualcommHardWare()
-    }
-  }
-  // 抽象产品，定义手机操作系统的共性
-  class OS {
-    controlHardWare() {
-      throw new Error('抽象产品方法不允许直接调用，你需要将我重写！')
-    }
-  }
-  // 具体产品，定义具体的手机操作系统 
-  class AndroidOS extends OS {
-    controlHardWare() {
-      console.log('操作系统：我会用安卓的方式去操作硬件')
-    }
-  }
-  // 抽象产品，定义手机硬件的共性
-  class HardWare {
-    operateByOrder() {
-      throw new Error('抽象产品方法不允许直接调用，你需要将我重写！')
-    }
-  }
-  // 具体产品：定义具体的手机硬件 
-  class QualcommHardWare extends HardWare {
-    operateByOrder() {
-      console.log('硬件：我会用高通的方式去运转')
-    }
-  }
+&ensp;**将创建对象的过程单独封装 —— 抽象不同构造函数之间的变与不变**
 
-  // 生产一台拥有安卓操作系统和高通硬件的手机
-  const myMobilePhone = new FakeStarFactory() // 创建手机实例
-  const myOS = myMobilePhone.createOS() // 添加操作系统
-  const myHardWare = myMobilePhone.createHardWare() // 添加硬件
-  myOS.controlHardWare() // 启动操作系统
-  myHardWare.operateByOrder() // 启动硬件
+```javascript
+function User(name, age, career, work) {
+  this.name = name;
+  this.age = age;
+  this.career = career;
+  this.work = work;
+}
 
-  // 扩展具体工厂， 生产一款新的手机
-  class newStarFactory extends MobilePhoneFactory {
-    createOS() {}
-    createHardWare() {}
+// 将 承载共性的构造函数 和 承载个性的逻辑判断 写入同一函数
+function Factory(name, age, career) {
+  let work;
+  switch (career) {
+    case "boss":
+      work = ["喝茶", "看报", "见客户"];
+      break;
+    case "coder":
+      work = ["写代码", "写系分", "修Bug"];
+      break;
   }
-  ```
-  &ensp;**`重要提示：`**
-  &emsp;1. 抽象工厂和简单工厂的共同之处是都基于“封装变化”的思想去分离一个系统中变与不变的部分，不同之处是应用的场景复杂度不同，简单工厂的处理对象是不苛求可扩展性的简单类，抽象工厂的处理对象是存在各种扩展可能性的能进一步划分的复杂类。
-  &emsp;2. 抽象工厂目前在JS中应用得并不广泛，需要留意三点：(1) 学会用ES6模拟Java中的抽象类；(2) 了解抽象工厂模式中四个角色的定位和作用；(3) 理解“开放封闭”设计原则，知道它的好用之处和执行之必要性。
+  return new User("李雷", 25, "coder");
+}
+```
 
-## 创建型：单例模式 —— Vuex的数据管理哲学
+&ensp;**`重要提示：`**
+&emsp;在写了大量构造函数、调用了大量 new 的情况下，就应该思考是不是可以用工厂模式重构代码了！
+
+### 三. 抽象工厂模式
+
+&ensp;**围绕一个超级工厂创建其他工厂 —— 遵循“开放封闭”设计原则**
+
+&ensp;将一个复杂场景中不同的类按性质划分为 4 个关键角色[1 - 4]：
+
+&nbsp;0. 超级工厂：拥有多个抽象工厂的系统 【电子厂】
+
+1. 抽象工厂：抽象类，用于声明最终目标产品的共性，每个抽象工厂对应的一类产品称为“产品族” 【手机厂，电脑厂，...】
+2. 具体工厂：继承自抽象工厂，用于生成产品族里的一类具体产品 【智能手机厂，非智能手机厂，...】
+3. 抽象产品：抽象类，用于声明具体产品所依赖的细粒度产品的共性 【操作系统厂，硬件厂，...】
+4. 具体产品： 继承自抽象产品，用于生成具体产品所依赖的细粒度产品 【安卓操作系统厂/苹果操作系统厂，小米硬件厂/高通硬件厂，...】
+
+```javascript
+// 抽象工厂，定义手机的共性
+class MobilePhoneFactory {
+  createOS() {
+    // 提供操作系统的接口
+    throw new Error("抽象工厂方法不允许直接调用，你需要将我重写！");
+  }
+  createHardWare() {
+    // 提供硬件的接口
+    throw new Error("抽象工厂方法不允许直接调用，你需要将我重写！");
+  }
+}
+// 具体工厂，用于生成手机实例
+class FakeStarFactory extends MobilePhoneFactory {
+  createOS() {
+    // 提供操作系统实例
+    return new AndroidOS();
+  }
+  createHardWare() {
+    // 提供硬件实例
+    return new QualcommHardWare();
+  }
+}
+// 抽象产品，定义手机操作系统的共性
+class OS {
+  controlHardWare() {
+    throw new Error("抽象产品方法不允许直接调用，你需要将我重写！");
+  }
+}
+// 具体产品，定义具体的手机操作系统
+class AndroidOS extends OS {
+  controlHardWare() {
+    console.log("操作系统：我会用安卓的方式去操作硬件");
+  }
+}
+// 抽象产品，定义手机硬件的共性
+class HardWare {
+  operateByOrder() {
+    throw new Error("抽象产品方法不允许直接调用，你需要将我重写！");
+  }
+}
+// 具体产品：定义具体的手机硬件
+class QualcommHardWare extends HardWare {
+  operateByOrder() {
+    console.log("硬件：我会用高通的方式去运转");
+  }
+}
+
+// 生产一台拥有安卓操作系统和高通硬件的手机
+const myMobilePhone = new FakeStarFactory(); // 创建手机实例
+const myOS = myMobilePhone.createOS(); // 添加操作系统
+const myHardWare = myMobilePhone.createHardWare(); // 添加硬件
+myOS.controlHardWare(); // 启动操作系统
+myHardWare.operateByOrder(); // 启动硬件
+
+// 扩展具体工厂， 生产一款新的手机
+class newStarFactory extends MobilePhoneFactory {
+  createOS() {}
+  createHardWare() {}
+}
+```
+
+&ensp;**`重要提示：`**
+&emsp;1. 抽象工厂和简单工厂的共同之处是都基于“封装变化”的思想去分离一个系统中变与不变的部分，不同之处是应用的场景复杂度不同，简单工厂的处理对象是不苛求可扩展性的简单类，抽象工厂的处理对象是存在各种扩展可能性的能进一步划分的复杂类。
+&emsp;2. 抽象工厂目前在 JS 中应用得并不广泛，需要留意三点：(1) 学会用 ES6 模拟 Java 中的抽象类；(2) 了解抽象工厂模式中四个角色的定位和作用；(3) 理解“开放封闭”设计原则，知道它的好用之处和执行之必要性。
+
+## 创建型：单例模式 —— Vuex 的数据管理哲学
+
 ### 一. 单例模式的实现思路
-  &ensp;**保证一个类仅有一个实例，并提供一个访问它的全局访问点 —— 不管尝试创建多少次，都只返回第一次创建的实例**
-  
-  &ensp;构造函数需要具备判断自己是否已经创建过一个实例的能力
-  ```javascript
-  // 1.判断逻辑写在静态方法中
-  class SingleDog {
-    constructor() {
-      this.instance = null
+
+&ensp;**保证一个类仅有一个实例，并提供一个访问它的全局访问点 —— 不管尝试创建多少次，都只返回第一次创建的实例**
+
+&ensp;构造函数需要具备判断自己是否已经创建过一个实例的能力
+
+```javascript
+// 1.判断逻辑写在静态方法中
+class SingleDog {
+  constructor() {
+    this.instance = null;
+  }
+  static getInstance() {
+    if (!this.instance) {
+      this.instance = new SingleDog();
     }
-    static getInstance() { 
-      if (!this.instance) {
-        this.instance = new SingleDog()
-      }
-      return this.instance
+    return this.instance;
+  }
+}
+const s1 = SingleDog.getInstance();
+const s2 = SingleDog.getInstance();
+
+// 2.判断逻辑写在闭包中
+function SingleDog() {}
+const getInstance = (function () {
+  let instance = null;
+  return function () {
+    if (!instance) {
+      instance = new SingleDog();
+    }
+    return instance;
+  };
+})();
+const s1 = getInstance();
+const s2 = getInstance();
+
+// s1和s2都指向唯一的实例
+s1 === s2; // true
+```
+
+### 二. 生产实践：Vuex 中的单例模式
+
+**理解 Vuex 中的 Store**
+
+1. 引入 Vuex 插件
+
+```javascript
+import Vue from "vue";
+import Vuex from "vuex";
+
+Vue.use(Vuex);
+```
+
+- Vue.use 源码
+
+```javascript
+// 截取参数
+function toArray(list: any, start?: number): Array<any> {
+  start = start || 0;
+  let i = list.length - start;
+  const ret: Array<any> = new Array(i);
+  while (i--) {
+    ret[i] = list[i + start];
+  }
+  return ret;
+}
+// 注册插件
+export function initUse(Vue: GlobalAPI) {
+  Vue.use = function (plugin: Function | Object) {
+    const installedPlugins =
+      this._installedPlugins || (this._installedPlugins = []); // 已安装插件列表
+    if (installedPlugins.indexOf(plugin) > -1) {
+      // 防止重复注册
+      return this;
+    }
+
+    const args = toArray(arguments, 1);
+    args.unshift(this);
+    if (typeof plugin.install === "function") {
+      // 如果插件是一个对象，必须提供install方法
+      plugin.install.apply(plugin, args);
+    } else if (typeof plugin === "function") {
+      // 如果插件是一个函数，它会被直接当作install方法
+      plugin.apply(null, args);
+    }
+    installedPlugins.push(plugin);
+    return this;
+  };
+}
+```
+
+- Vuex install 源码
+
+```javascript
+let vue; // instance
+function install(_Vue) {
+  if (Vue && _Vue === Vue) {
+    // 判断传入的Vue实例对象是否已经被install过Vuex插件
+    if (__DEV__) {
+      console.error(
+        "[vuex] already installed. Vue.use(Vuex) should be called only once."
+      );
+    }
+    return;
+  }
+  Vue = _Vue; // 若没有，为该Vue实例对象install一个唯一的Vuex
+  applyMixin(Vue); // 将Vuex的初始化逻辑写进Vue的钩子函数里
+}
+// applyMixin(Vue)
+function vuexInit() {
+  const options = this.$options; // 当前Vue实例的初始化选项
+  if (options.store) {
+    // 根实例有store
+    this.$store =
+      typeof options.store === "function" ? options.store() : options.store;
+  } else if (options.parent && options.parent.$store) {
+    // 根实例没有store，就找父节点的store
+    this.$store = options.parent.$store;
+  }
+}
+Vue.mixin({ beforeCreate: vuexInit }); // 全局混入
+```
+
+2. 创建 store
+
+```javascript
+const store = new Vuex.Store({
+  state: {},
+  mutations: {},
+  actions: {},
+  modules: {},
+});
+```
+
+3. 将 store 注入到 Vue 实例中
+
+```javascript
+new Vue({
+  el: "#app",
+  store,
+});
+```
+
+## 创建型：原型模式 —— 谈 Prototype 无小事
+
+&ensp;**生成指定深度和广度的对象**
+
+```javascript
+function createData(deep, breadth) {
+  var data = {};
+  var temp = data;
+
+  for (var i = 0; i < deep; i++) {
+    temp = temp["data"] = {};
+    for (var j = 0; j < breadth; j++) {
+      temp[j] = j;
     }
   }
-  const s1 = SingleDog.getInstance()
-  const s2 = SingleDog.getInstance()
-  
-  // 2.判断逻辑写在闭包中
-  function SingleDog() {}
-  const getInstance = (function() {
-    let instance = null
-    return function() {
-      if(!instance) {
-        instance = new SingleDog()
-      }
-      return instance
-    }
-  })()
-  const s1 = getInstance()
-  const s2 = getInstance()
 
- // s1和s2都指向唯一的实例 
- s1 === s2 // true
-  ```
-### 二. 生产实践：Vuex中的单例模式
-  **理解Vuex中的Store**
-  1. 引入Vuex插件
-  ```javascript
-  import Vue from 'vue'
-  import Vuex from 'vuex'
+  return data;
+}
 
-  Vue.use(Vuex)    
-  ```
-  - Vue.use源码
-  ```javascript
-  // 截取参数
-  function toArray (list: any, start?: number): Array<any> {
-    start = start || 0
-    let i = list.length - start
-    const ret: Array<any> = new Array(i)
-    while (i--) {
-      ret[i] = list[i + start]
-    }
-    return ret
-  }
-  // 注册插件
-  export function initUse (Vue: GlobalAPI) {
-    Vue.use = function (plugin: Function | Object) {
-      const installedPlugins = (this._installedPlugins || (this._installedPlugins = [])) // 已安装插件列表
-      if (installedPlugins.indexOf(plugin) > -1) { // 防止重复注册
-        return this
-      }
+// 1层深度，每层有3个数据
+createData(1, 3); // {data: {0: 0, 1: 1, 2: 2}}
+// 3层深度，每层有0个数据
+createData(3, 0); // {data: {data: {data: {}}}}
+```
 
-      const args = toArray(arguments, 1)
-      args.unshift(this)
-      if (typeof plugin.install === 'function') { // 如果插件是一个对象，必须提供install方法
-        plugin.install.apply(plugin, args)
-      } else if (typeof plugin === 'function') { // 如果插件是一个函数，它会被直接当作install方法
-        plugin.apply(null, args)
-      }
-      installedPlugins.push(plugin) 
-      return this
+&ensp;**浅拷贝 —— 一层拷贝**
+
+```javascript
+function shallowClone(source) {
+  var target = {};
+  // key in Obj：判断自身或原型链上是否存在某个属性
+  // for key in Obj: 遍历自身以及原型链上enumerable为true的可枚举属性，结合hasOwnProperty可以过滤掉原型链上的属性
+  // Object.keys(Obj): 遍历自身的可枚举属性
+  // Object.getOwnPropertyNames(Obj): 遍历自身的所有属性
+  for (var i in source) {
+    if (source.hasOwnProperty(i)) {
+      target[i] = source[i];
     }
   }
-  ```
-  - Vuex install源码
-  ```javascript
-  let vue; // instance
-  function install (_Vue) {
-    if (Vue && _Vue === Vue) { // 判断传入的Vue实例对象是否已经被install过Vuex插件
-      if (__DEV__) {
-        console.error(
-          '[vuex] already installed. Vue.use(Vuex) should be called only once.'
-        )
-      }
-      return
-    }
-    Vue = _Vue // 若没有，为该Vue实例对象install一个唯一的Vuex
-    applyMixin(Vue) // 将Vuex的初始化逻辑写进Vue的钩子函数里
-  }
-  // applyMixin(Vue)
-  function vuexInit () {
-    const options = this.$options // 当前Vue实例的初始化选项
-    if (options.store) { // 根实例有store
-      this.$store = typeof options.store === 'function'
-        ? options.store()
-        : options.store
-    } else if (options.parent && options.parent.$store) { // 根实例没有store，就找父节点的store
-      this.$store = options.parent.$store
-    }
-  }
-  Vue.mixin({ beforeCreate: vuexInit }) // 全局混入
-  ```
-  2. 创建store
-  ```javascript
-  const store = new Vuex.Store({
-    state: {},
-    mutations: {},
-    actions: {},
-    modules: {}
-  })
-  ```
-  3. 将store注入到Vue实例中
-  ```javascript
-  new Vue({
-    el: '#app',
-    store
-  })
-  ```
 
-## 创建型：原型模式 —— 谈Prototype无小事
-  &ensp;**生成指定深度和广度的对象**
-  ```javascript
-  function createData(deep, breadth) {
-    var data = {};
-    var temp = data;
+  return target;
+}
+```
 
-    for (var i = 0; i < deep; i++) {
-      temp = temp['data'] = {};
-      for (var j = 0; j < breadth; j++) {
-          temp[j] = j;
-      }
-    }
+&ensp;**深拷贝 —— 无限层级拷贝**
 
-    return data;
-  }
-
-  // 1层深度，每层有3个数据
-  createData(1, 3); // {data: {0: 0, 1: 1, 2: 2}}
-  // 3层深度，每层有0个数据
-  createData(3, 0); // {data: {data: {data: {}}}}
-  ```
-  &ensp;**浅拷贝 —— 一层拷贝**
-  ```javascript
-  function shallowClone(source){
-    var target = {};
-    for(var i in source) {
-      if(source.hasOwnProperty(i)) {
+```javascript
+// 扩展shallowClone
+// 存在问题：1.未检验参数；2.判断对象的逻辑不严谨；3.未考虑兼容
+function deepClone(source) {
+  var target = {};
+  for (var i in source) {
+    if (source.hasOwnProperty(i)) {
+      if (typeof source[i] === "object") {
+        target[i] = deepClone(source[i]);
+      } else {
         target[i] = source[i];
       }
-    } 
-
-    return target;
+    }
   }
-  ```
-  &ensp;**深拷贝 —— 无限层级拷贝**
-  ```javascript
-  // 扩展shallowClone
-  // 存在问题：1.未检验参数；2.判断对象的逻辑不严谨；3.未考虑array、set、map、weakset、weakmap的兼容
-  function deepClone(source){
-    var target = {};
-    for(var i in source) { 
-      if(source.hasOwnProperty(i)) {
-        if (typeof source[i] === 'object') { 
-          target[i] = deepClone(source[i]);
-        } else {
-          target[i] = source[i];
-        }
+
+  return target;
+}
+
+// 递归，栈溢出
+deepClone(createData(10000)); // Maximum call stack size exceeded
+// 循环引用，栈溢出
+let data = {};
+data.data = data;
+deepClone(data);
+
+// 1.判断对象
+function isObject(x) {
+  // 与typeof相比，能够区分null、array: typeof null === 'object'; typeof [1,2,3] === 'object'
+  // 与toString()相比，调用的不是Object对象实例重写的方法而是Object原型对象的方法: [1,2,3].toString() === '1,2,3'; Object.prototype.toString.call([1,2,3]) === '[object Array]'
+  // 不能准确判断自定义对象: function func() {}; Object.prototype.toString.call(new func()) === '[object Object]';
+  return Object.prototype.toString.call(x) === "[object Object]";
+}
+
+// 2.判断类型
+function type(x, strict = false) {
+  // 将strict转换为布尔型
+  strict = !!strict;
+
+  // 解决 typeof null === 'object' 无法判断的问题
+  if (x === null) {
+    return "null";
+  }
+
+  const t = typeof x;
+
+  // typeof NaN === 'number'
+  if (strict && t === Number && isNaN(x)) {
+    return "NaN";
+  }
+
+  // typeof 1 === 'number'
+  // typeof '1' === 'string'
+  // typeof false === 'boolean'
+  // typeof undefined === 'undefined'
+  // typeof Symbol() === 'symbol'
+  // typeof function (){} === 'function'
+  if (t !== "object") {
+    return t;
+  }
+
+  let cls, clsLow;
+  try {
+    cls = Object.prototype.toString.call(x).slice(8, -1);
+    clsLow = cls.toLowercase();
+  } catch (e) {
+    // ie，new ActiveXObject(String)报错
+    return "object";
+  }
+
+  if (clsLow !== "object") {
+    if (strict) {
+      // Object.prototype.toString.call(new Number(NaN)) === '[object Number]'
+      if (clsLow === "number" && isNaN(clsLow)) {
+        return "NaN";
       }
-    } 
-
-    return target;
+      // Object.prototype.toString.call(new Number()) === '[object Number]'; 
+      // Object.prototype.toString.call(new Boolean()) === '[object Boolean]'; 
+      // Object.prototype.toString.call(new String()) === '[object String]'; 
+      if (clsLow === "number" || clsLow === "boolean" || clsLow === "string") {
+        return cls;
+      }
+    }
+    // Object.prototype.toString.call([]) === '[object Array]'; 
+    // Object.prototype.toString.call(new Array()) === '[object Array]'
+    // Object.prototype.toString.call(new Set()) === '[object Set]'
+    // Object.prototype.toString.call(new WeakSet()) === '[object WeakSet]'
+    // Object.prototype.toString.call(new Map()) === '[object Map]'
+    // Object.prototype.toString.call(new WeakMap()) === '[object WeakMap]'
+    // Object.prototype.toString.call(new WeakRef({})) === '[object WeakRef]'
+    return clsLow;
   }
 
-  // 递归，栈溢出
-  deepClone(createData(10000)); // Maximum call stack size exceeded
-  // 循环引用，栈溢出
-  let data = {};
-  data.data = data;
-  deepClone(data);
-
-  // 1.判断对象
-  function isObject(x) {
-    // 与typeof相比，能够区分null、array: typeof null === 'object'; typeof [1,2,3] === 'object'
-    // 与toString()相比，调用的不是Object对象实例重写的方法而是Object原型对象的方法: [1,2,3].toString() === '1,2,3'; Object.prototype.toString.call([1,2,3]) === '[object Array]'
-    // 不能准确判断自定义对象: function func() {}; Object.prototype.toString.call(new func()) === '[object Object]';
-    return Object.prototype.toString.call(x) === '[object Object]';
+  // Object.prototype.toString.call({}) === '[object Object]'; constructor: Object
+  // Object.prototype.toString.call(new Object()) === '[object Object]'; constructor: Object
+  if (x.constructor == Object) {
+    return clsLow;
   }
-  ```
+
+  try {
+    // Object.prototype.toString.call(Object.create(null)) === '[object Object]'; constructor: undefined
+    // Object.getPrototypeOf(Object.create(null)) === null
+    // x.__prototype__ === null 应用于早期firefox
+    if (Object.getPrototypeOf(x) === null || x.__prototype__ === null) {
+      return "object";
+    }
+  } catch (e) {
+    // ie，无Object.getPrototypeOf会报错
+  }
+
+  try {
+    // Object.prototype.toString.call(new function(){}) === '[object Object]'; constructor: f(){}（）
+    const cname = x.constructor.name;
+    if(typeof cname === 'string') {
+      return cname;
+    }
+  } catch (e) {
+    // 无constructor
+  }
+
+  // function A() {}; A.prototype.constructor = null; new A
+  // new A instanceof A === true
+  return 'unknown';
+}
+```
 
 ## 参考链接
-  1. [vue.use()方法从源码到使用](https://juejin.cn/post/6844903842035793928)  
-  2. [vuex实现原理](https://blog.csdn.net/qq_14993375/article/details/103981954)
-  3. [深拷贝的终极探索（99%的人都不知道）](https://segmentfault.com/a/1190000016672263)
-  4. [用Object.prototype.toString.call(obj)检测对象类型原因分析](https://www.jb51.net/article/148604.htm)
+
+1. [vue.use()方法从源码到使用](https://juejin.cn/post/6844903842035793928)
+2. [vuex 实现原理](https://blog.csdn.net/qq_14993375/article/details/103981954)
+3. [深拷贝的终极探索（99%的人都不知道）](https://segmentfault.com/a/1190000016672263)
+4. [用 Object.prototype.toString.call(obj)检测对象类型原因分析](https://www.jb51.net/article/148604.htm)
+5. [详解 forin，Object.keys 和 Object.getOwnPropertyNames 的区别](https://yanhaijing.com/javascript/2015/05/09/diff-between-keys-getOwnPropertyNames-forin/)
