@@ -346,179 +346,84 @@ new Vue({
 
 ## 创建型：原型模式 —— 谈 Prototype 无小事
 
-&ensp;**生成指定深度和广度的对象**
+### 一. 以类为中心的语言和以原型为中心的语言
+
+&ensp;**以类为中心的语言，原型模式不是必选项，它只用于特定场景** 
+
+&ensp;Java在大多数情况下以“实例化类”的方式来创建对象，虽然专门针对原型模式设计了一套接口和方法，但是只在必要场景下通过原型方法来应用原型模式，实现类型之间的解耦
+```java
+// 实例化类：通过传递相同的参数来创建相同的实例
+Dog dog = new Dog('旺财', 'male', 3, '柴犬')
+Dog dog_copy = new Dog('旺财', 'male', 3, '柴犬')
+```
+&ensp;**以原型为中心的语言，原型模式是根基，是一种编程范式** 
+
+&ensp;JavaScript本身类型比较模糊，不存在类型耦合的问题，使用原型模式不是为了得到一个副本，而是为了得到与构造函数（类）相对应类型的实例，实现数据和方法的共享
+
+### 二. 谈原型模式，其实是谈原型范式
+&ensp;**在JavaScript中，原型编程范式的体现就是基于原型链的继承**
+
+#### 1. 原型 
+
+&ensp;(1) 每个构造函数都有一个prototype属性指向其原型对象，而其原型对象又有一个constructor属性指回构造函数本身  
+&ensp;(2) 每个实例都有一个__proto__属性，使用构造函数创建实例时，实例的__proto__属性就会指向构造函数的原型对象
 
 ```javascript
-function createData(deep, breadth) {
-  var data = {};
-  var temp = data;
-
-  for (var i = 0; i < deep; i++) {
-    temp = temp["data"] = {};
-    for (var j = 0; j < breadth; j++) {
-      temp[j] = j;
-    }
-  }
-
-  return data;
+// 创建Dog构造函数
+// Dog.prototype.constructor === Dog
+function Dog(name, age) {
+  this.name = name
+  this.age = age
+}
+Dog.prototype.eat = function() {
+  console.log('肉骨头真好吃')
 }
 
-// 1层深度，每层有3个数据
-createData(1, 3); // {data: {0: 0, 1: 1, 2: 2}}
-// 3层深度，每层有0个数据
-createData(3, 0); // {data: {data: {data: {}}}}
+// 使用Dog构造函数创建dog实例
+// dog.__proto__ === Dog.prototype
+// dog.hasOwnProperty('name') === true; dog.hasOwnProperty('age') === true
+// dog.eat === Dog.prototype.eat; dog.hasOwnProperty('eat') === false
+const dog = new Dog('旺财', 3)
+
+// 原型链： 实例 -> 实例的原型对象 -> 实例的原型对象的原型对象 ... -> Object
+// dog -> dog.__proto__(Dog.prototype) ->  Dog.prototype.__proto__(Object.prototype)
+// Object.prototype.__proto__ === null
+dog.toString() === '[object Object]'
+
+// 创建一个没有原型的对象
+Object.create(null).__proto__ === undefined
 ```
 
-&ensp;**浅拷贝 —— 一层拷贝**
+### 对象的深拷贝
+&ensp;**深拷贝没有完美方案，每一种方案都有它的边界case，需要考虑不同数据结构（Array、Object、Map和Set等）的处理**
 
+用递归实现深拷贝的核心思路
 ```javascript
-function shallowClone(source) {
-  var target = {};
-  // key in Obj：判断自身或原型链上是否存在某个属性
-  // for key in Obj: 遍历自身以及原型链上enumerable为true的可枚举属性，结合hasOwnProperty可以过滤掉原型链上的属性
-  // Object.keys(Obj): 遍历自身的可枚举属性
-  // Object.getOwnPropertyNames(Obj): 遍历自身的所有属性
-  for (var i in source) {
-    if (source.hasOwnProperty(i)) {
-      target[i] = source[i];
+function deepClone(obj) {
+    // 值类型或null
+    if(obj === null || typeof obj !== 'object') {
+        return obj
     }
-  }
 
-  return target;
+    // 定义结果对象
+    let copy = {}
+    if(obj.constructor === Array) {
+        copy = []
+    }
+
+    for(key in obj) {
+        if(obj.hasOwnProperty(key)) {
+            copy[key] = deepClone(obj[key])
+        }
+    }
+
+    return copy
 }
 ```
 
-&ensp;**深拷贝 —— 无限层级拷贝**
-
-```javascript
-// 扩展shallowClone
-// 存在问题：1.未检验参数；2.判断对象的逻辑不严谨；3.未考虑兼容
-function deepClone(source) {
-  var target = {};
-  for (var i in source) {
-    if (source.hasOwnProperty(i)) {
-      if (typeof source[i] === "object") {
-        target[i] = deepClone(source[i]);
-      } else {
-        target[i] = source[i];
-      }
-    }
-  }
-
-  return target;
-}
-
-// 递归，栈溢出
-deepClone(createData(10000)); // Maximum call stack size exceeded
-// 循环引用，栈溢出
-let data = {};
-data.data = data;
-deepClone(data);
-
-// 1.判断对象
-function isObject(x) {
-  // 与typeof相比，能够区分null、array: typeof null === 'object'; typeof [1,2,3] === 'object'
-  // 与toString()相比，调用的不是Object对象实例重写的方法而是Object原型对象的方法: [1,2,3].toString() === '1,2,3'; Object.prototype.toString.call([1,2,3]) === '[object Array]'
-  // 不能准确判断自定义对象: function func() {}; Object.prototype.toString.call(new func()) === '[object Object]';
-  return Object.prototype.toString.call(x) === "[object Object]";
-}
-
-// 2.判断类型
-function type(x, strict = false) {
-  // 将strict转换为布尔型
-  strict = !!strict;
-
-  // 解决 typeof null === 'object' 无法判断的问题
-  if (x === null) {
-    return "null";
-  }
-
-  const t = typeof x;
-
-  // typeof NaN === 'number'
-  if (strict && t === Number && isNaN(x)) {
-    return "NaN";
-  }
-
-  // typeof 1 === 'number'
-  // typeof '1' === 'string'
-  // typeof false === 'boolean'
-  // typeof undefined === 'undefined'
-  // typeof Symbol() === 'symbol'
-  // typeof function (){} === 'function'
-  if (t !== "object") {
-    return t;
-  }
-
-  let cls, clsLow;
-  try {
-    cls = Object.prototype.toString.call(x).slice(8, -1);
-    clsLow = cls.toLowercase();
-  } catch (e) {
-    // ie，new ActiveXObject(String)报错
-    return "object";
-  }
-
-  if (clsLow !== "object") {
-    if (strict) {
-      // Object.prototype.toString.call(new Number(NaN)) === '[object Number]'
-      if (clsLow === "number" && isNaN(clsLow)) {
-        return "NaN";
-      }
-      // Object.prototype.toString.call(new Number()) === '[object Number]'; 
-      // Object.prototype.toString.call(new Boolean()) === '[object Boolean]'; 
-      // Object.prototype.toString.call(new String()) === '[object String]'; 
-      if (clsLow === "number" || clsLow === "boolean" || clsLow === "string") {
-        return cls;
-      }
-    }
-    // Object.prototype.toString.call([]) === '[object Array]'; 
-    // Object.prototype.toString.call(new Array()) === '[object Array]'
-    // Object.prototype.toString.call(new Set()) === '[object Set]'
-    // Object.prototype.toString.call(new WeakSet()) === '[object WeakSet]'
-    // Object.prototype.toString.call(new Map()) === '[object Map]'
-    // Object.prototype.toString.call(new WeakMap()) === '[object WeakMap]'
-    // Object.prototype.toString.call(new WeakRef({})) === '[object WeakRef]'
-    return clsLow;
-  }
-
-  // Object.prototype.toString.call({}) === '[object Object]'; constructor: Object
-  // Object.prototype.toString.call(new Object()) === '[object Object]'; constructor: Object
-  if (x.constructor == Object) {
-    return clsLow;
-  }
-
-  try {
-    // Object.prototype.toString.call(Object.create(null)) === '[object Object]'; constructor: undefined
-    // Object.getPrototypeOf(Object.create(null)) === null
-    // x.__prototype__ === null 应用于早期firefox
-    if (Object.getPrototypeOf(x) === null || x.__prototype__ === null) {
-      return "object";
-    }
-  } catch (e) {
-    // ie，无Object.getPrototypeOf会报错
-  }
-
-  try {
-    // Object.prototype.toString.call(new function(){}) === '[object Object]'; constructor: f(){}（）
-    const cname = x.constructor.name;
-    if(typeof cname === 'string') {
-      return cname;
-    }
-  } catch (e) {
-    // 无constructor
-  }
-
-  // function A() {}; A.prototype.constructor = null; new A
-  // new A instanceof A === true
-  return 'unknown';
-}
-```
+更多内容，见另一篇文章 [深、浅拷贝]()
 
 ## 参考链接
 
 1. [vue.use()方法从源码到使用](https://juejin.cn/post/6844903842035793928)
 2. [vuex 实现原理](https://blog.csdn.net/qq_14993375/article/details/103981954)
-3. [深拷贝的终极探索（99%的人都不知道）](https://segmentfault.com/a/1190000016672263)
-4. [用 Object.prototype.toString.call(obj)检测对象类型原因分析](https://www.jb51.net/article/148604.htm)
-5. [详解 forin，Object.keys 和 Object.getOwnPropertyNames 的区别](https://yanhaijing.com/javascript/2015/05/09/diff-between-keys-getOwnPropertyNames-forin/)
