@@ -421,7 +421,176 @@ function deepClone(obj) {
 }
 ```
 
-更多内容，见另一篇文章 [深、浅拷贝]()
+更多内容，请看这里 [深、浅拷贝](https://nodisappear.github.io/ad2c1b4b.html)
+
+## 结构型：装饰器模式 —— 对象装上它，就像开了挂
+&ensp;**在不改变原对象的基础上，对原对象进行包装拓展使其可以满足用户更复杂的需求**
+
+### 装饰器模式初相见
+&ensp;**为了不被业务逻辑所干扰，应该将旧逻辑与新逻辑分离**  
+```html
+<!-- button -->
+<button id='open'>点击</button>
+```
+```javascript
+// modal
+const Modal = (function() {
+    let modal = null
+    return function() {
+        if(!modal) {
+            modal = document.createElement('div')
+            modal.innerText = 'modal'
+            modal.style.display = 'none'
+            document.body.appendChild(modal)
+        }
+        return modal
+    }
+})()
+// 封装旧逻辑-显示modal
+class OpenButton {
+    onClick() {
+        const modal = new Modal()
+        modal.style.display = 'block'
+    }
+}
+// 装饰器-修改按钮的文字和状态
+class Decorator {
+    constructor(open_button) {
+        this.open_button = open_button // 传入内含旧逻辑的实例
+    }
+    onClick() {
+        this.open_button.onClick() // 执行-旧逻辑
+        this.changeButtonStatus() // 执行-新逻辑
+    }
+    // 整合新逻辑
+    changeButtonStatus() {
+        this.changeButtonText()
+        this.disableButton()
+    }
+    // 拆分新逻辑
+    disableButton() {
+        const btn =  document.getElementById('open')
+        btn.setAttribute("disabled", true)
+    }
+    changeButtonText() {
+        const btn = document.getElementById('open')
+        btn.innerText = '置灰'
+    }
+}
+const openButton = new OpenButton()
+const decorator = new Decorator(openButton)
+document.getElementById('open').addEventListener('click', function() {
+    decorator.onClick()
+})
+```
+
+### 值得关注的细节
+&ensp;**`重要提示：`**  
+&emsp;在日常开发中，当遇到两段各司其职的代码逻辑时，首先要有“尝试拆分”的敏感，其次要有“该不该拆”的判断，当逻辑粒度过小时，盲目拆分会导致代码中存在过多零碎的小方法，反而不会使代码变得更好
+
+## 结构型：装饰器模式 —— 深入装饰器原理与优秀案例
+
+### 前置知识：ES7中的装饰器
+&ensp;**在ES7中，可以用 @语法糖 去装饰一个类或一个类的方法**
+```javascript
+// 装饰器函数
+function classDecorator(target) {
+    target.hasDecorator = true 
+    return target
+}
+// 类装饰器
+@classDecorator
+class Button {} 
+Button.hasDecorator // true
+
+function funDecorator(target, name, descriptor) { 
+    let originalMethod = descriptor.value 
+    descriptor.value = function() {
+        console.log('装饰器逻辑')
+        return originalMethod.apply(this, arguments)
+    }
+    return descriptor
+}
+// 方法装饰器
+Class Button {
+    @funDecorator
+    onClick() {
+        console.log('原有逻辑')
+    }
+} 
+const button = new Button() 
+button.onClick() // 装饰器逻辑 原有逻辑
+```
+
+### 装饰器语法糖背后的故事
+&ensp;**装饰器最基本的操作是定义装饰器函数，将被装饰者“交给”装饰器** 
+
+1. 装饰器函数传参  
+(1) 类修饰器：第一个参数是目标类  
+(2) 方法装饰器：第一个参数是目标类的原型对象，第二个参数是目标属性名，第三个参数是属性描述对象
+2. 装饰器函数的调用时机  
+装饰器函数在编译阶段执行，类的实例在代码运行时动态生成，为了让实例能正常调用被装饰好的类的方法，只能用装饰器去修饰目标类的原型对象
+
+### 生产实践
+
+#### React中的装饰器：HOC
+&ensp;**HOC（Higher Order Component），高阶组件**
+
+1. 编写一个高阶组件，把传入的组件丢进一个有红色边框的容器中
+
+```javascript
+// 高阶组件是一个函数，接收一个组件作为参数，并返回一个新组件
+import React, { Component } from 'react'
+
+const BorderHoc = WrappedComponent => class extends Component {
+    return() {
+        return <div style="{{ border: 'solid 1px red' }}"> 
+            <WrappedComponent />
+        </div>
+    }
+}
+
+// 装饰目标组件
+@BorderHoc
+class TargetComponent extends React.Component {
+    render() {}
+}
+```
+
+2. 用装饰器改写 Redux connect
+
+```javascript
+import React, { Component } from 'react'
+import { connect } from 'react-redux'
+import { bindActionCreators } from 'redux'
+import action from './action.js'
+
+// 建立组件和状态之间的映射关系
+function mapStateToProps(state) {
+    return state.app 
+}
+
+// 建立组件和store.dispatch的关系，使组件具备通过dispatch来派发状态的能力
+function mapDispatchToProps(dispatch) {
+    return bindActionCreators(action, dispatch)
+}
+
+/* ------ 原本 ------- */
+class App extends Component {
+    render() {}
+}
+// 调用connect可以返回一个具有装饰作用的函数，接收一个组件作为参数，传入组件与Redux结合，具备Redux提供的数据和能力
+connect(mapStateToProps, mapDispatchToProps)(App) 
+
+/* ------ 改写 ------ */
+// 将调用connect的结果作为一个装饰器
+const _connect = connect(mapStateToProps, mapDispatchToProps)
+
+@_connect 
+class App extends Component {
+    render()
+}
+```
 
 ## 参考链接
 
