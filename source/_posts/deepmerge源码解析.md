@@ -10,12 +10,15 @@ date: 2021-10-08 16:45:41
 ---
 
 ### 一. 介绍
+
 deepmerge: 以深拷贝的方式，合并两个或多个对象的可枚举属性。
 
 ### 二. 模块加载，
+
 CommonJs规范：module.exports = deepmerge;
 
 ### 三. 主要流程
+
 ```javascript
 function deepmerge(target, source, options) {
 	options = options || {}
@@ -82,6 +85,7 @@ function cloneUnlessOtherwiseSpecified(value, options) {
 ```
 
 #### 3. cloneUnlessOtherwiseSpecified(value, options)
+
 将source中存在，而target中不存在的属性直接以一个空Object，进行深拷贝合并。
 
 ```javascript
@@ -93,6 +97,7 @@ function defaultArrayMerge(target, source, options) {
 ```
 
 #### 4. 数组合并
+
 对target和source两个数组执行concat操作，然后对每个值执行深拷贝cloneUnlessOtherwiseSpecified(element, options) 
 
 ```javascript
@@ -107,12 +112,15 @@ deepmerge.all = function deepmergeAll(array, options) {
 }
 ```
 #### 5. deepmerge.all 
+
 对多个对象执行深拷贝操作，这里直接将all函数作为deepmerge函数的一个属性
 
 ### 四. 补充知识点
+
 deemerge 就是一个考虑全面、比较通用的深拷贝实现【比如source和target不同类型、能否merge、包含原型对象属性、预留自定义merge方法等】。代码本身比较精炼，值得学习参考。
 
 #### 1. getKeys考虑了Symbol属性
+
 ```javascript
 function getEnumerableOwnPropertySymbols(target) {
 	return Object.getOwnPropertySymbols
@@ -128,6 +136,7 @@ function getKeys(target) {
 ```
 
 #### 2. 属性是否位于原型链上，自由属性是否可枚举
+
 ```javascript
 function propertyIsOnObject(object, property) {
 	try {

@@ -1,5 +1,5 @@
 ---
-title: 常用快捷键
+title: IDE常用快捷键
 categories: 技术
 tags:
   - 效率
