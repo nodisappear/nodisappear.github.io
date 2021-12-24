@@ -421,7 +421,7 @@ function deepClone(obj) {
 }
 ```
 
-更多内容，请看这里 [深、浅拷贝](https://nodisappear.github.io/ad2c1b4b.html)
+更多内容： [深浅拷贝](https://nodisappear.github.io/ad2c1b4b.html)
 
 ## 结构型：装饰器模式 —— 对象装上它，就像开了挂
 &ensp;**在不改变原对象的基础上，对原对象进行包装拓展使其可以满足用户更复杂的需求**
@@ -592,7 +592,455 @@ class App extends Component {
 }
 ```
 
+## 结构型：代理模式 —— 应用实践范例解析
+&ensp;**一个对象不能直接访问另一个对象，需要第三者牵线搭桥而间接达到访问目的**
+
+### 前置知识 ES6中的Proxy
+```javascript
+const proxy = new Proxy(target, handler) // target为目标对象，handler为拦截行为
+```
+
+### 事件代理
+&ensp;**基于事件冒泡特性，将子元素的事件监听绑定到父元素上，操作不会直接触及目标子元素，而是由父元素进行处理分发后间接作用于子元素**
+```html
+<div id="father">
+    <a href="#">链接1号</a>
+    <a href="#">链接2号</a> 
+</div>
+```
+```javascript
+// 未代理，监听每个子元素
+const aNodes = document.getElementById('father').getElementsByTagName('a')
+for(let i=0;i<aNodes.length;i++) {
+    aNodes[i].addEventListener('click', function(e) {
+        e.preventDefault()
+        alert(`我是${aNodes[i].innerText}`)                  
+    })
+}
+// 代理，只监听父元素
+document.getElementById('father').addEventListener('click', function(e) {
+    if(e.target.tagName === 'A') {
+        e.preventDefault()
+        alert(`我是${e.target.innerText}`) 
+    }
+})
+```
+
+### 虚拟代理
+&ensp;**图片预加载时，页面img元素先展示占位图片，创建一个Image实例加载目标图片，然后将页面img元素的src指向目标图片（已缓存）**
+```javascript
+// 操作真实Image
+class PreLoadImage { 
+    constructor(imgNode) {
+        this.imgNode = imgNode
+    }
+    setSrc(imgUrl) {
+        this.imgNode.src = imgUrl
+    }
+}
+
+// 接收真实Image，操作虚拟Image
+class ProxyImage { 
+    static LOADING_URL = 'xxxxxx'
+    constructor(targetImage) {
+        this.targetImage = targetImage
+    }
+    setSrc(targetUrl) {
+        this.targetImage.setSrc(ProxyImage.LOADING_URL) // 真实Image初始化显示占位图片
+        const virtualImage = new Image() // 创建虚拟Image实例
+        virtualImage.onload = () => { // 虚拟Image加载完毕，真实Image显示真实图片
+            this.targetImage.setSrc(targetUrl)
+        }
+        virtualImage.src = targetUrl // 虚拟Image初始化显示真实图片
+    }
+}
+```
+
+### 缓存代理
+&ensp;**对运算结果进行缓存**
+```javascript
+// 未代理，每次都重新计算
+const addAll = function() {
+    let result = 0
+    const len = arguments.length
+    for(let i = 0; i < len; i++) {
+        result += arguments[i]
+    }
+    return result
+}
+
+// 代理，优先从缓存中读取计算结果
+const proxyAddAll = (function(){                     
+    const resultCache = {}
+    return function() {
+        const args = Array.prototype.join.call(arguments, ',')
+        if(args in resultCache) {
+            return resultCache[args]
+        }
+        return resultCache[args] = addAll(...arguments)
+    }
+})()
+proxyAddAll(1,2)
+```
+
+### 保护代理
+&ensp;**在访问层的getter和setter函数里添加校验和拦截，确保一部分变量是安全的**
+```javascript
+const person = {
+    age: 18,
+    career: 'teacher',
+    phone: 12345654321
+}
+const baseInfo = ['age', 'career']
+const privateInfo = ['phone']
+const user = {isValidated: true, isVIP: false}
+
+const accessProxy = new Proxy(person, {
+    get: function(person, key) {
+        if(!user.isValidated) {
+            alert('您还没有完成验证哦')
+            return
+        } 
+        if(!user.isVIP && privateInfo.indexOf(key)!==-1) {
+            alert('只有VIP才可以查看该信息哦')
+            return
+        } 
+
+        return person[key]
+    }
+})
+```
+
+## 行为型：策略模式 —— 重构小能手，拆分胖逻辑
+&ensp;**定义一系列的算法,把它们一个个封装起来, 并且使它们可相互替换**
+
+```javascript
+// 对象映射：把相关算法收敛到一个对象里 
+// 单一职责原则：各行为函数相互独立，不依赖调用主体
+const priceProcessor = {
+    processor1(originPrice) {
+        if (originPrice >= 100) {
+            return originPrice - 20
+        }
+        return originPrice * 0.9
+    },
+    processor2(originPrice) {
+        if (originPrice >= 100) {
+            return originPrice - 30
+        }
+        return originPrice * 0.8
+    }
+};
+
+// 通过委托实现行为分发
+function askPrice(tag, originPrice) {
+  return priceProcessor[tag](originPrice)
+}
+
+// 扩展：开发封闭原则
+priceProcessor.processor3 = function(originPrice) {
+    if (originPrice >= 100) {
+        return originPrice - 50
+    }
+    return originPrice
+}
+
+askPrice('processor3', 150) // 100
+```
+
+## 行为型：状态模式 —— 自主咖啡机背后的力量
+&ensp;**允许一个对象在其内部状态改变时改变它的行为，对象看起来似乎修改了它的类**
+
+```javascript
+class CoffeeMaker {
+    constructor() {
+        this.state = 'init'
+        this.excessMile = '1000ml' // 主体状态
+    }
+    // 单一职责原则：各行为函数可能不会特别割裂，和状态主体之间存在着关联
+    stateToProcess = {
+        that: this,
+        american() {
+            console.log('咖啡机现在的牛奶存储量是:', this.that.leftMilk) // 获取主体状态
+            console.log('我只吐黑咖啡')
+        }
+        latte() {
+            this.american()
+            console.log('加点奶')
+        },
+        mocha() {
+            this.latte();
+            console.log('加点巧克力')
+        }
+        changeState(state) { // 状态切换函数
+            this.state = state
+            if (!this.stateToProcessor[state]) {
+                return
+            }
+            this.stateToProcessor[state]()
+        }
+    }
+}
+
+const mk = new CoffeeMaker();
+mk.changeState('latte');
+```
+
+## 行为型：观察者模式 —— 鬼故事：产品经理拉了一个钉钉群
+&ensp;**观察者模式定义了一种一对多的依赖关系，让多个观察者对象同时监听某一个目标对象，当这个目标对象的状态发生变化时，会通知所有观察者对象，使它们能够自动更新，发布者可以直接触及到订阅者**
+
+```javascript
+/* ------ 角色划分 状态变化 发布者通知订阅者 ------ */
+// 抽象的发布者类
+class Publisher {
+    constructor() {
+        this.observers = [] // *维护订阅者的集合
+        console.log('Publisher created')
+    }
+    addObserver(observer) { // 增加订阅者
+        console.log('Publisher.addObserver invoked')
+        this.observers.push(observer)
+    }
+    removeObserver(observer) { // 移除订阅者
+        console.log('Publisher.removeObserver invoked')
+        this.observers.forEach((item, i) => {
+            if (item === observer) {
+                this.observers.splice(i, 1)
+            }
+        })
+    }
+    notifyObserver() { // 通知所有订阅者
+        console.log('Publisher.notifyObserver invoked')
+        this.observers.forEach((observer) => {
+            observer.update(this)
+        })
+    }
+}
+
+// 抽象的订阅者类
+class Observer {
+    constructor() {
+        console.log('Observer created')
+    }
+    update() {
+        console.log('Observer.update invoked') // *提供统一方法供发布者调用
+    }
+}
+
+// 具体的发布者类
+class SpPublisher extends Publisher {
+    constructor() {
+        super()
+        this.state = null
+        console.log('SpPublisher created')
+    }
+    getState() {
+        console.log('SpPublisher.getState invoked')
+        return this.state
+    }
+    setState(state) {
+        console.log('SpPublisher.setState invoked')
+        this.state = state
+        this.notifyObserver()
+    }
+}
+
+// 具体的订阅者类
+class SpObserver extends Observer {
+    constructor() {
+        super()
+        this.state = null
+        console.log('SpObserver created')
+    }
+    update(publisher) {
+        console.log('SpObserver.update invoked')
+        this.state = publisher.getState()
+        this.do()
+    }
+    do() {
+        console.log('SpObserver.do invoked')
+        console.log(this.state)
+    }
+}
+
+const publisher = new SpPublisher()
+const observer1 = new SpObserver()
+const observer2 = new SpObserver()
+publisher.addObserver(observer1)
+publisher.addObserver(observer2)
+publisher.setState('go!!!')
+```
+
+## 行为型：观察者模式 —— 面试真题手把手教学
+
+### Vue数据双向绑定（响应式系统）的实现原理
+&ensp;**“发布-订阅”模式：发布者不直接触及到订阅者，而是由统一的第三方完成实际的通信操作,实现了完全地解耦**  
+
+1. 三个关键角色：监听器、订阅者、编译器   
+(1) observer监听器：监听数据并转发给订阅者（发布者）  
+(2) watcher订阅者：接收数据并更新视图  
+(3) compile编译器：初始化视图，更新订阅者...
+1. 核心代码
+```javascript
+// observer：在init阶段，对数据进行响应式化
+function observer(target) {
+    if(target && typeof target === 'object') {
+        Object.keys(target).forEach((key)=>{
+            defineReactive(target, key, target[key])      
+        })
+    }
+}
+function defineReactive(target, key, val) {
+    const dep = new Dep()
+    observer(val)
+    Object.defineProperty(target, key, {
+        enumerable: true,
+        configurable: false,
+        get: function() {
+            dep.addSub(Dep.target) // 依赖收集：将watcher对象存放到dep中
+            return val
+        },
+        set: function(value) { // 通过setter -> Watcher -> update的流程来修改视图
+            if(val !== value) {
+                val = value
+                dep.notify()
+            }
+        }
+    })
+}
+// Dep：订阅者收集器（发布者）
+class Dep {
+    constructor() {
+        this.subs = [] //存放watcher
+    }
+    addSub(sub) {
+        this.subs.push(sub)
+    }
+    notify() {
+        this.subs.forEach((sub)=>{
+            sub.update()
+        })
+    }
+}
+
+// watcher: 订阅者（观察者)
+class Watcher {
+    constructor() {
+        Dep.target = this
+    }
+    update() {
+        console.log("视图更新啦～")
+    }
+}
+
+// Vue data
+class Vue {
+    constructor(options) {
+        this._data = options.data
+        observer(this._data)
+        new Watcher()
+        console.log('render:', this._data.test) // 模拟渲染，触发get
+    }
+}
+let obj = new Vue({
+    data: { test: 1 }
+})
+obj._data.test = 2
+
+// 全局事件总线 Event Bus：所有事件的发布/订阅操作必须经由事件中心
+class EventBus {
+    constructor() {
+        this.handlers = {} // 存储事件与回调的对应关系
+    }
+    on(eventName, callback) {
+        if(!this.handlers[eventName]) {
+            this.handlers[eventName] = [] // 初始化监听函数队列
+        }
+        this.handlers[eventName].push(callback)
+    }
+    emit(eventName, ...args) {
+        if(this.handlers[eventName]) {
+            const handlers = this.handlers[eventName].slice() // 浅拷贝，避免once移除监听器时弄乱顺序
+            handlers.forEach((callback) => { // 逐个调用监听函数队列里的回调函数
+                callback(...args)
+            })
+            /* this.handlers[eventName].forEach((callback) => {
+                callback(...args)
+            }) */
+        }
+    }
+    off(eventName, callback) { // 移除监听函数队列里的指定回调函数
+        const callbacks = this.handlers[eventName]
+        const index = callbacks.indexOf(callback)
+        if (index !== -1) {
+            callbacks.splice(index, 1)
+        }
+    }
+    once(eventName, callback) { // 单次监听
+        const wrapper = (...args) => {
+            callback(...args)
+            this.off(eventName, wrapper)
+        }
+        this.on(eventName, wrapper)
+    }
+}
+
+let bus = new EventBus()
+function getNum(num) {
+    console.log('get:', num)
+}
+bus.on('event1', getNum)
+bus.emit('event1', 8)
+bus.once('event2', getNum)
+bus.emit('event2', 10)
+```
+
+## 行为型：迭代器模式 —— 真·遍历专家
+&ensp;**迭代器模式提供一种方法顺序访问一个聚合对象中的各个元素，而又不暴露该对象的内部表示**
+
+### ES6对迭代器的实现
+&ensp;**ES6约定，任何数据结构只要具备Symbol.iterator属性，就可以通过迭代器.next()和for(...of...)进行遍历**
+
+```javascript
+const arr = [1, 2, 3]
+// 迭代器.next()
+const iterator = arr[Symbol.iterator]()
+let now = { done: false }
+while(!now.done) {
+    now = iterator.next()
+    if(!now.done) {
+        console.log(`现在遍历到了${now.value}`)
+    }
+}
+// for(...of...)
+for(item of arr) { // 实际是next方法的反复调用
+    console.log(`当前元素是${item}`)
+}
+```
+
+### 实现一个迭代器生成函数
+
+```javascript
+// 通过闭包记录每次遍历的位置
+function iteratorGenerator(list) {
+    var idx = 0
+    var len = list.length
+    return {
+        next: function() {
+            var done = idx >= len
+            var value = !done ? list[idx++] : undefined
+            return {
+                done: done,
+                value: value
+            }
+        }
+    }
+}
+```
+
 ## 参考链接
 
 1. [vue.use()方法从源码到使用](https://juejin.cn/post/6844903842035793928)
 2. [vuex 实现原理](https://blog.csdn.net/qq_14993375/article/details/103981954)
+3. [响应式系统的基本原理](https://www.kancloud.cn/sllyli/vuejs/1244018)
+4. [响应式系统的依赖收集追踪原理](https://www.kancloud.cn/sllyli/vuejs/1244019)
