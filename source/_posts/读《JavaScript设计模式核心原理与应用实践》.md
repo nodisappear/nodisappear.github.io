@@ -592,6 +592,108 @@ class App extends Component {
 }
 ```
 
+## 结构型：适配器模式 —— 兼容代码就是一把梭
+&ensp;**通过把一个类的接口变换成客户端所期待的另一种接口，解决一些兼容性问题**
+
+### 适配器的业务场景
+&ensp;**用适配器承接旧接口的参数，实现新旧接口的无缝衔接**
+
+```javascript
+// 旧接口
+function Ajax(type, url, data, success, failed) {
+    if(type === 'Get') {}
+    else if(type === 'Post') {}
+}
+Ajax('get', url, data, function(res){}, function(err){})
+Ajax('post', url, data, function(res){}, function(err){})
+
+// 新接口
+class HttpUtils {
+    static get(url) {}
+    static post(url, data) {}
+}
+
+// 适配器 - 入参与旧接口保持一致
+function AjaxAdapter(type, url, data, success, failed) {
+    let res
+    try {
+        if(type === 'Get') {
+            res = HttpUtils.get(url)
+        } else if(type === 'Post') {
+            res = HttpUtils.post(url, data)
+        }
+        success(res)
+    } catch(err) {
+        failed(err)
+    }
+}
+function Ajax(type, url, data, success, failed) {
+    AjaxAdapter(type, url, data, success, failed)
+}
+``` 
+### 生产实践：axios中的适配器
+&ensp;**用dispatchRequest方法派发请求**
+
+```javascript
+// 1. 统一接口
+Axios.prototype.request = function request(config) {
+    return dispatchRequest(newConfig) 
+}
+// 用getDefaultAdapter方法获取默认适配器
+var defaults = {
+    adapter: getDefaultAdapter()
+}
+function getDefaultAdapter() { 
+    var adapter;
+    if (typeof XMLHttpRequest !== 'undefined') { // 浏览器环境
+        adapter = function xhrAdapter(config) {
+            return new Promise(function dispatchXhrRequest(resolve, reject) {}) // 4. 统一规则
+        }
+    } else if (typeof process !== 'undefined' && Object.prototype.toString.call(process) === '[object process]') { // Node环境
+        adapter = function httpAdapter(config) {
+            return new Promise(function dispatchHttpRequest(resolvePromise, rejectPromise) {} // 4. 统一规则
+        }
+    }
+    return adapter; // 3. 统一出参，都是Promise
+}
+
+// 2. 统一入参，调用适配器
+function dispatchRequest(config) {
+    // 转换请求体
+    config.data = transformData.call(
+        config,
+        config.data,
+        config.headers,
+        config.transformRequest
+    );
+    var adapter = config.adapter || defaults.adapter;
+    return adapter(config).then(
+        function onAdapterResolution(response) {
+            // 转换响应体
+            response.data = transformData.call(
+                config,
+                response.data,
+                response.headers,
+                config.transformResponse
+            );
+            return response
+        }, 
+        function onAdapterRejection(reason) {
+            // 转换响应体
+            if (reason && reason.response) {
+                reason.response.data = transformData.call(
+                    config,
+                    reason.response.data,
+                    reason.response.headers,
+                    config.transformResponse
+                )
+            }
+            return Promise.reject(reason)
+        }
+    );
+}
+```
+
 ## 结构型：代理模式 —— 应用实践范例解析
 &ensp;**一个对象不能直接访问另一个对象，需要第三者牵线搭桥而间接达到访问目的**
 
