@@ -1,0 +1,323 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+
+<head>
+    <!--Setting-->
+    <meta name="baidu-site-verification" content="code-f6RfR7ByGN" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+    <meta http-equiv="Cache-Control" content="no-siteapp">
+    <meta http-equiv="Cache-Control" content="no-transform">
+    <meta name="renderer" content="webkit|ie-comp|ie-stand">
+    <meta name="apple-mobile-web-app-capable" content="XinAnXiaoZhan">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="format-detection" content="telephone=no,email=no,adress=no">
+    <meta name="browsermode" content="application">
+    <meta name="screen-orientation" content="portrait">
+    <meta name="theme-version" content="1.3.0">
+    <meta name="root" content="/">
+    <link rel="dns-prefetch" href="http://example.com">
+    <!--SEO-->
+
+<meta name="keywords" content="源码" />
+
+
+<meta name="description" content="一. 介绍deepmerge: 以深拷贝的方式，合并两个或多个对象的可枚举属性。
+二. 模块加载，CommonJs规范：module.exports = deepmerge;
+三. 主要流程12..." />
+
+
+<meta name="robots" content="all" />
+<meta name="google" content="all" />
+<meta name="googlebot" content="all" />
+<meta name="verify" content="all" />
+    <!--Title-->
+
+<title>
+    
+    deepmerge源码解析 |
+    
+    XinAnXiaoZhan
+</title>
+
+<link rel="alternate" href="/atom.xml" title="XinAnXiaoZhan" type="application/atom+xml">
+
+
+<link rel="icon" href="./img/page-favicon.jpg">
+
+    
+
+
+<link rel="stylesheet" href="/css/bootstrap.min.css?rev=3.3.7.css">
+<link rel="stylesheet" href="/css/font-awesome.min.css?rev=4.7.0.css">
+<link rel="stylesheet" href="/css/style.css?rev=@@hash.css">
+
+    
+<div class="hide">
+    <script type="text/javascript">
+    var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");
+    document.write(unescape("%3Cspan class='cnzz_stat_icon_1263868967 hide' %3E%3Cscript%20src%3D%22https%3A%2F%2Fs95.cnzz.com%2Fz_stat.php%3Fweb_id%3D1272564536%22%3E%3C%2Fscript%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s19.cnzz.com/z_stat.php%3Fid%3D1263868967%26show%3Dpic1' type='text/javascript'%3E%3C/script%3E"));
+    </script>
+</div>
+
+
+
+
+    
+
+<meta name="generator" content="Hexo 5.4.1"></head>
+<!--[if lte IE 8]>
+<style>
+    html{ font-size: 1em }
+</style>
+<![endif]-->
+<!--[if lte IE 9]>
+<div style="ie">你使用的浏览器版本过低，为了你更好的阅读体验，请更新浏览器的版本或者使用其他现代浏览器，比如Chrome、Firefox、Safari等。</div>
+<![endif]-->
+<body>
+    <header class="main-header">
+    <div class="main-header-box">
+        <div class="header-avatar">
+            <img class="img-responsive center-block" src="/./img/head-avatar-2.jpg" alt="头像">
+        </div>
+        <div class="main-header-title">
+            <span>心安小栈</span>
+        </div>
+    </div>
+</header>
+    <nav class="main-navigation">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="navbar-header"><span class="nav-toggle-button collapsed pull-right" data-toggle="collapse" data-target="#main-menu" id="mnav">
+                    <span class="sr-only"></span>
+                    <i class="fa fa-bars"></i>
+                </span>
+                </div>
+                <div class="collapse navbar-collapse" id="main-menu">
+                    <ul class="menu">
+                           
+                        <li role="presentation" class="text-center menus">
+                            <a href="/"><i class="fa "></i>
+                                首页</a>
+                        </li>
+                           
+                        <li role="presentation" class="text-center menus">
+                            <a href="/categories/"><i class="fa "></i>
+                                分类</a>
+                        </li>
+                           
+                        <li role="presentation" class="text-center menus">
+                            <a href="/tags/"><i class="fa "></i>
+                                标签</a>
+                        </li>
+                           
+                        <li role="presentation" class="text-center menus">
+                            <a href="/archives/"><i class="fa "></i>
+                                归档</a>
+                        </li>
+                           
+                        <li role="presentation" class="text-center menus">
+                            <a href="/about/"><i class="fa "></i>
+                                关于</a>
+                        </li>
+                        
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
+    <section class="content-wrap">
+        <div class="container">
+            <div class="row">
+                <main class="col-md-9 main-content m-post">
+                    <p id="process"></p>
+<article class="post">
+    <div class="post-head">
+        <h1 id="deepmerge源码解析">
+            
+            deepmerge源码解析
+            
+        </h1>
+        <div class="post-meta">
+    
+    <span class="categories-meta fa-wrap">
+        <i class="fa fa-folder-open-o"></i>
+        <a class="category-link" href="/categories/%E6%8A%80%E6%9C%AF/">技术</a>
+    </span>
+    
+    
+    <span class="fa-wrap">
+        <i class="fa fa-tags"></i>
+        <span class="tags-meta">
+            
+            <a class="tag-none-link" href="/tags/%E6%BA%90%E7%A0%81/" rel="tag">源码</a>
+            
+        </span>
+    </span>
+    
+    
+    
+    <span class="fa-wrap">
+        <i class="fa fa-clock-o"></i>
+        <span class="date-meta">
+            2021/10/08</span>
+    </span>
+    
+    <span class="fa-wrap">
+        <i class="fa fa-eye"></i>
+        <span id="busuanzi_value_page_pv"></span>
+    </span>
+    
+    
+</div>
+        
+        
+    </div>
+    
+    <div class="post-body post-content">
+        <h3 id="一-介绍"><a href="#一-介绍" class="headerlink" title="一. 介绍"></a>一. 介绍</h3><p>deepmerge: 以深拷贝的方式，合并两个或多个对象的可枚举属性。</p>
+<h3 id="二-模块加载，"><a href="#二-模块加载，" class="headerlink" title="二. 模块加载，"></a>二. 模块加载，</h3><p>CommonJs规范：module.exports = deepmerge;</p>
+<h3 id="三-主要流程"><a href="#三-主要流程" class="headerlink" title="三. 主要流程"></a>三. 主要流程</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">deepmerge</span>(<span class="params">target, source, options</span>) &#123;</span><br><span class="line">	options = options || &#123;&#125;</span><br><span class="line">	options.<span class="property">arrayMerge</span> = options.<span class="property">arrayMerge</span> || defaultArrayMerge</span><br><span class="line">	options.<span class="property">isMergeableObject</span> = options.<span class="property">isMergeableObject</span> || defaultIsMergeableObject</span><br><span class="line">	<span class="comment">// cloneUnlessOtherwiseSpecified is added to `options` so that custom arrayMerge()</span></span><br><span class="line">	<span class="comment">// implementations can use it. The caller may not replace it.</span></span><br><span class="line">	options.<span class="property">cloneUnlessOtherwiseSpecified</span> = cloneUnlessOtherwiseSpecified</span><br><span class="line"></span><br><span class="line">	<span class="keyword">var</span> sourceIsArray = <span class="title class_">Array</span>.<span class="title function_">isArray</span>(source)</span><br><span class="line">	<span class="keyword">var</span> targetIsArray = <span class="title class_">Array</span>.<span class="title function_">isArray</span>(target)</span><br><span class="line">	<span class="keyword">var</span> sourceAndTargetTypesMatch = sourceIsArray === targetIsArray</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (!sourceAndTargetTypesMatch) &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="title function_">cloneUnlessOtherwiseSpecified</span>(source, options)</span><br><span class="line">	&#125; <span class="keyword">else</span> <span class="keyword">if</span> (sourceIsArray) &#123;</span><br><span class="line">		<span class="keyword">return</span> options.<span class="title function_">arrayMerge</span>(target, source, options)</span><br><span class="line">	&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="title function_">mergeObject</span>(target, source, options)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="1-判断target和source的类型"><a href="#1-判断target和source的类型" class="headerlink" title="1. 判断target和source的类型"></a>1. 判断target和source的类型</h4><p>主要分为：<br>（1）source和target是不同的类型，执行cloneUnlessOtherwiseSpecified(source, options)；<br>（2）source和target都是数组类型，执行options.arrayMerge(target, source, options)；<br>（3）sourc和target都是Object类型，执行mergeObject(target, source, options)。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">mergeObject</span>(<span class="params">target, source, options</span>) &#123;</span><br><span class="line">	<span class="keyword">var</span> destination = &#123;&#125;</span><br><span class="line">	<span class="keyword">if</span> (options.<span class="title function_">isMergeableObject</span>(target)) &#123;</span><br><span class="line">		<span class="title function_">getKeys</span>(target).<span class="title function_">forEach</span>(<span class="keyword">function</span>(<span class="params">key</span>) &#123;</span><br><span class="line">			destination[key] = <span class="title function_">cloneUnlessOtherwiseSpecified</span>(target[key], options)</span><br><span class="line">		&#125;)</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="title function_">getKeys</span>(source).<span class="title function_">forEach</span>(<span class="keyword">function</span>(<span class="params">key</span>) &#123;</span><br><span class="line">		<span class="keyword">if</span> (<span class="title function_">propertyIsUnsafe</span>(target, key)) &#123;</span><br><span class="line">			<span class="keyword">return</span></span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">if</span> (<span class="title function_">propertyIsOnObject</span>(target, key) &amp;&amp; options.<span class="title function_">isMergeableObject</span>(source[key])) &#123;</span><br><span class="line">			destination[key] = <span class="title function_">getMergeFunction</span>(key, options)(target[key], source[key], options)</span><br><span class="line">		&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">			destination[key] = <span class="title function_">cloneUnlessOtherwiseSpecified</span>(source[key], options)</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;)</span><br><span class="line">	<span class="keyword">return</span> destination</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="2-mergeObject-target-source-options"><a href="#2-mergeObject-target-source-options" class="headerlink" title="2. mergeObject(target, source, options)"></a>2. mergeObject(target, source, options)</h4><p>（1）对target对象执行深拷贝操作；<br>（2）遍历source对象，如果key值是在target原型链中存在，直接返回；如果key值是target中自有属性且可以合并，则执行 getMergeFunction(key, options)(target[key], source[key], options)；否则直接将source属性深拷贝到target中，执行 cloneUnlessOtherwiseSpecified(source[key], options)。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">cloneUnlessOtherwiseSpecified</span>(<span class="params">value, options</span>) &#123;</span><br><span class="line">	<span class="keyword">return</span> (options.<span class="property">clone</span> !== <span class="literal">false</span> &amp;&amp; options.<span class="title function_">isMergeableObject</span>(value))</span><br><span class="line">		? <span class="title function_">deepmerge</span>(<span class="title function_">emptyTarget</span>(value), value, options)</span><br><span class="line">		: value</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="3-cloneUnlessOtherwiseSpecified-value-options"><a href="#3-cloneUnlessOtherwiseSpecified-value-options" class="headerlink" title="3. cloneUnlessOtherwiseSpecified(value, options)"></a>3. cloneUnlessOtherwiseSpecified(value, options)</h4><p>将source中存在，而target中不存在的属性直接以一个空Object，进行深拷贝合并。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">defaultArrayMerge</span>(<span class="params">target, source, options</span>) &#123;</span><br><span class="line">	<span class="keyword">return</span> target.<span class="title function_">concat</span>(source).<span class="title function_">map</span>(<span class="keyword">function</span>(<span class="params">element</span>) &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="title function_">cloneUnlessOtherwiseSpecified</span>(element, options)</span><br><span class="line">	&#125;)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="4-数组合并"><a href="#4-数组合并" class="headerlink" title="4. 数组合并"></a>4. 数组合并</h4><p>对target和source两个数组执行concat操作，然后对每个值执行深拷贝cloneUnlessOtherwiseSpecified(element, options) </p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">deepmerge.<span class="property">all</span> = <span class="keyword">function</span> <span class="title function_">deepmergeAll</span>(<span class="params">array, options</span>) &#123;</span><br><span class="line">	<span class="keyword">if</span> (!<span class="title class_">Array</span>.<span class="title function_">isArray</span>(array)) &#123;</span><br><span class="line">		<span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">Error</span>(<span class="string">&#x27;first argument should be an array&#x27;</span>)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> array.<span class="title function_">reduce</span>(<span class="keyword">function</span>(<span class="params">prev, next</span>) &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="title function_">deepmerge</span>(prev, next, options)</span><br><span class="line">	&#125;, &#123;&#125;)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="5-deepmerge-all"><a href="#5-deepmerge-all" class="headerlink" title="5. deepmerge.all"></a>5. deepmerge.all</h4><p>对多个对象执行深拷贝操作，这里直接将all函数作为deepmerge函数的一个属性</p>
+<h3 id="四-补充知识点"><a href="#四-补充知识点" class="headerlink" title="四. 补充知识点"></a>四. 补充知识点</h3><p>deemerge 就是一个考虑全面、比较通用的深拷贝实现【比如source和target不同类型、能否merge、包含原型对象属性、预留自定义merge方法等】。代码本身比较精炼，值得学习参考。</p>
+<h4 id="1-getKeys考虑了Symbol属性"><a href="#1-getKeys考虑了Symbol属性" class="headerlink" title="1. getKeys考虑了Symbol属性"></a>1. getKeys考虑了Symbol属性</h4><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">getEnumerableOwnPropertySymbols</span>(<span class="params">target</span>) &#123;</span><br><span class="line">	<span class="keyword">return</span> <span class="title class_">Object</span>.<span class="property">getOwnPropertySymbols</span></span><br><span class="line">		? <span class="title class_">Object</span>.<span class="title function_">getOwnPropertySymbols</span>(target).<span class="title function_">filter</span>(<span class="keyword">function</span>(<span class="params">symbol</span>) &#123;</span><br><span class="line">			<span class="keyword">return</span> target.<span class="title function_">propertyIsEnumerable</span>(symbol)</span><br><span class="line">		&#125;)</span><br><span class="line">		: []</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">getKeys</span>(<span class="params">target</span>) &#123;</span><br><span class="line">	<span class="keyword">return</span> <span class="title class_">Object</span>.<span class="title function_">keys</span>(target).<span class="title function_">concat</span>(<span class="title function_">getEnumerableOwnPropertySymbols</span>(target))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="2-属性是否位于原型链上，自由属性是否可枚举"><a href="#2-属性是否位于原型链上，自由属性是否可枚举" class="headerlink" title="2. 属性是否位于原型链上，自由属性是否可枚举"></a>2. 属性是否位于原型链上，自由属性是否可枚举</h4><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">propertyIsOnObject</span>(<span class="params">object, property</span>) &#123;</span><br><span class="line">	<span class="keyword">try</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> property <span class="keyword">in</span> object</span><br><span class="line">	&#125; <span class="keyword">catch</span>(_) &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">false</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Protects from prototype poisoning and unexpected merging up the prototype chain.</span></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">propertyIsUnsafe</span>(<span class="params">target, key</span>) &#123;</span><br><span class="line">	<span class="keyword">return</span> <span class="title function_">propertyIsOnObject</span>(target, key) <span class="comment">// Properties are safe to merge if they don&#x27;t exist in the target yet,</span></span><br><span class="line">		&amp;&amp; !(<span class="title class_">Object</span>.<span class="property">hasOwnProperty</span>.<span class="title function_">call</span>(target, key) <span class="comment">// unsafe if they exist up the prototype chain,</span></span><br><span class="line">			&amp;&amp; <span class="title class_">Object</span>.<span class="property">propertyIsEnumerable</span>.<span class="title function_">call</span>(target, key)) <span class="comment">// and also unsafe if they&#x27;re nonenumerable.</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="参考文献"><a href="#参考文献" class="headerlink" title="参考文献"></a>参考文献</h3><p>[1] <a target="_blank" rel="noopener" href="https://www.npmjs.com/package/deepmerge">deepmerge的npm官方文档</a></p>
+
+    </div>
+    
+    <div class="post-footer">
+        <div>
+            
+                转载声明：<br/>
+                商业转载请联系作者获得授权, 非商业转载请注明出处 © XinAnXiaoZhan
+                
+            
+        </div>
+        <div>
+            
+        </div>
+    </div>
+</article>
+<div class="article-nav prev-next-wrap clearfix">
+    
+    <a href="/806a46bc.html" class="pre-post btn btn-default" title='读《JavaScript设计模式核心原理与应用实践》'>
+        <i class="fa fa-angle-left fa-fw"></i><span class="hidden-lg">上一篇</span>
+        <span class="hidden-xs">
+            读《JavaScript设计模式核心原理与应用实践》</span>
+    </a>
+    
+    
+    <a href="/5028d3ef.html" class="next-post btn btn-default" title='IDE常用快捷键'>
+        <span class="hidden-lg">下一篇</span>
+        <span class="hidden-xs">
+            IDE常用快捷键</span><i class="fa fa-angle-right fa-fw"></i>
+    </a>
+    
+</div>
+
+<div id="comments">
+    
+    
+<div class="utteranc">
+  
+  <script
+    src='https://utteranc.es/client.js'
+    repo='nodisappear/XinAnXiaoZhan'
+    issue-term='pathname'
+    issue-number=''
+    theme='github-light'
+    label=''
+    crossorigin='anonymous'
+    async
+  ></script>
+</div>
+
+
+
+</div>
+
+                </main>
+                
+                    <aside id="article-toc" role="navigation" class="col-md-3">
+    <div class="widget">
+        <h3 class="title">
+            文章目录
+        </h3>
+        
+        <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80-%E4%BB%8B%E7%BB%8D"><span class="toc-text">一. 介绍</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C-%E6%A8%A1%E5%9D%97%E5%8A%A0%E8%BD%BD%EF%BC%8C"><span class="toc-text">二. 模块加载，</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%89-%E4%B8%BB%E8%A6%81%E6%B5%81%E7%A8%8B"><span class="toc-text">三. 主要流程</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E5%88%A4%E6%96%ADtarget%E5%92%8Csource%E7%9A%84%E7%B1%BB%E5%9E%8B"><span class="toc-text">1. 判断target和source的类型</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-mergeObject-target-source-options"><span class="toc-text">2. mergeObject(target, source, options)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-cloneUnlessOtherwiseSpecified-value-options"><span class="toc-text">3. cloneUnlessOtherwiseSpecified(value, options)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-%E6%95%B0%E7%BB%84%E5%90%88%E5%B9%B6"><span class="toc-text">4. 数组合并</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#5-deepmerge-all"><span class="toc-text">5. deepmerge.all</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9B%9B-%E8%A1%A5%E5%85%85%E7%9F%A5%E8%AF%86%E7%82%B9"><span class="toc-text">四. 补充知识点</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-getKeys%E8%80%83%E8%99%91%E4%BA%86Symbol%E5%B1%9E%E6%80%A7"><span class="toc-text">1. getKeys考虑了Symbol属性</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E5%B1%9E%E6%80%A7%E6%98%AF%E5%90%A6%E4%BD%8D%E4%BA%8E%E5%8E%9F%E5%9E%8B%E9%93%BE%E4%B8%8A%EF%BC%8C%E8%87%AA%E7%94%B1%E5%B1%9E%E6%80%A7%E6%98%AF%E5%90%A6%E5%8F%AF%E6%9E%9A%E4%B8%BE"><span class="toc-text">2. 属性是否位于原型链上，自由属性是否可枚举</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E6%96%87%E7%8C%AE"><span class="toc-text">参考文献</span></a></li></ol>
+        
+    </div>
+</aside>
+                
+            </div>
+        </div>
+    </section>
+    <footer class="main-footer">
+    <div class="container">
+        <div class="row">
+        </div>
+    </div>
+</footer>
+<a id="back-to-top" class="icon-btn hide">
+    <i class="fa fa-chevron-up"></i>
+</a>
+    <div class="copyright">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="busuanzi">
+    
+    访问量:
+    <strong id="busuanzi_value_site_pv">
+        <i class="fa fa-spinner fa-spin"></i>
+    </strong>
+    &nbsp; | &nbsp;
+    访客数:
+    <strong id="busuanzi_value_site_uv">
+        <i class="fa fa-spinner fa-spin"></i>
+    </strong>
+    
+</div>
+            </div>
+            <div class="col-sm-12">
+                <span>Copyright &copy;
+                    2021
+                    
+                </span> |
+                <span>
+                    Powered by <a href="//hexo.io" class="copyright-links" target="_blank" rel="nofollow">Hexo</a>
+                </span> |
+                <span>
+                    Theme by <a href="//github.com/shenliyang/hexo-theme-snippet.git" class="copyright-links" target="_blank" rel="nofollow">Snippet</a>
+                </span>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+<script src="/js/app.js?rev=@@hash.js"></script>
+
+</body>
+</html>

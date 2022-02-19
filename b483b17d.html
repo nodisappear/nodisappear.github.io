@@ -1,0 +1,316 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+
+<head>
+    <!--Setting-->
+    <meta name="baidu-site-verification" content="code-f6RfR7ByGN" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+    <meta http-equiv="Cache-Control" content="no-siteapp">
+    <meta http-equiv="Cache-Control" content="no-transform">
+    <meta name="renderer" content="webkit|ie-comp|ie-stand">
+    <meta name="apple-mobile-web-app-capable" content="XinAnXiaoZhan">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="format-detection" content="telephone=no,email=no,adress=no">
+    <meta name="browsermode" content="application">
+    <meta name="screen-orientation" content="portrait">
+    <meta name="theme-version" content="1.3.0">
+    <meta name="root" content="/">
+    <link rel="dns-prefetch" href="http://example.com">
+    <!--SEO-->
+
+<meta name="keywords" content="源码" />
+
+
+<meta name="description" content="一. core-decorator装饰器库core-decorator是封装了一些常用功能的装饰器库，采用了es6的装饰器语法，可以装饰类和类的方法。
+二. es6的装饰器语法装饰器是一种函数，..." />
+
+
+<meta name="robots" content="all" />
+<meta name="google" content="all" />
+<meta name="googlebot" content="all" />
+<meta name="verify" content="all" />
+    <!--Title-->
+
+<title>
+    
+    core-decorator源码解析 |
+    
+    XinAnXiaoZhan
+</title>
+
+<link rel="alternate" href="/atom.xml" title="XinAnXiaoZhan" type="application/atom+xml">
+
+
+<link rel="icon" href="./img/page-favicon.jpg">
+
+    
+
+
+<link rel="stylesheet" href="/css/bootstrap.min.css?rev=3.3.7.css">
+<link rel="stylesheet" href="/css/font-awesome.min.css?rev=4.7.0.css">
+<link rel="stylesheet" href="/css/style.css?rev=@@hash.css">
+
+    
+<div class="hide">
+    <script type="text/javascript">
+    var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");
+    document.write(unescape("%3Cspan class='cnzz_stat_icon_1263868967 hide' %3E%3Cscript%20src%3D%22https%3A%2F%2Fs95.cnzz.com%2Fz_stat.php%3Fweb_id%3D1272564536%22%3E%3C%2Fscript%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s19.cnzz.com/z_stat.php%3Fid%3D1263868967%26show%3Dpic1' type='text/javascript'%3E%3C/script%3E"));
+    </script>
+</div>
+
+
+
+
+    
+
+<meta name="generator" content="Hexo 5.4.1"></head>
+<!--[if lte IE 8]>
+<style>
+    html{ font-size: 1em }
+</style>
+<![endif]-->
+<!--[if lte IE 9]>
+<div style="ie">你使用的浏览器版本过低，为了你更好的阅读体验，请更新浏览器的版本或者使用其他现代浏览器，比如Chrome、Firefox、Safari等。</div>
+<![endif]-->
+<body>
+    <header class="main-header">
+    <div class="main-header-box">
+        <div class="header-avatar">
+            <img class="img-responsive center-block" src="/./img/head-avatar-2.jpg" alt="头像">
+        </div>
+        <div class="main-header-title">
+            <span>心安小栈</span>
+        </div>
+    </div>
+</header>
+    <nav class="main-navigation">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="navbar-header"><span class="nav-toggle-button collapsed pull-right" data-toggle="collapse" data-target="#main-menu" id="mnav">
+                    <span class="sr-only"></span>
+                    <i class="fa fa-bars"></i>
+                </span>
+                </div>
+                <div class="collapse navbar-collapse" id="main-menu">
+                    <ul class="menu">
+                           
+                        <li role="presentation" class="text-center menus">
+                            <a href="/"><i class="fa "></i>
+                                首页</a>
+                        </li>
+                           
+                        <li role="presentation" class="text-center menus">
+                            <a href="/categories/"><i class="fa "></i>
+                                分类</a>
+                        </li>
+                           
+                        <li role="presentation" class="text-center menus">
+                            <a href="/tags/"><i class="fa "></i>
+                                标签</a>
+                        </li>
+                           
+                        <li role="presentation" class="text-center menus">
+                            <a href="/archives/"><i class="fa "></i>
+                                归档</a>
+                        </li>
+                           
+                        <li role="presentation" class="text-center menus">
+                            <a href="/about/"><i class="fa "></i>
+                                关于</a>
+                        </li>
+                        
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
+    <section class="content-wrap">
+        <div class="container">
+            <div class="row">
+                <main class="col-md-9 main-content m-post">
+                    <p id="process"></p>
+<article class="post">
+    <div class="post-head">
+        <h1 id="core-decorator源码解析">
+            
+            core-decorator源码解析
+            
+        </h1>
+        <div class="post-meta">
+    
+    <span class="categories-meta fa-wrap">
+        <i class="fa fa-folder-open-o"></i>
+        <a class="category-link" href="/categories/%E6%8A%80%E6%9C%AF/">技术</a>
+    </span>
+    
+    
+    <span class="fa-wrap">
+        <i class="fa fa-tags"></i>
+        <span class="tags-meta">
+            
+            <a class="tag-none-link" href="/tags/%E6%BA%90%E7%A0%81/" rel="tag">源码</a>
+            
+        </span>
+    </span>
+    
+    
+    
+    <span class="fa-wrap">
+        <i class="fa fa-clock-o"></i>
+        <span class="date-meta">
+            2021/12/15</span>
+    </span>
+    
+    <span class="fa-wrap">
+        <i class="fa fa-eye"></i>
+        <span id="busuanzi_value_page_pv"></span>
+    </span>
+    
+    
+</div>
+        
+        
+    </div>
+    
+    <div class="post-body post-content">
+        <h3 id="一-core-decorator装饰器库"><a href="#一-core-decorator装饰器库" class="headerlink" title="一. core-decorator装饰器库"></a>一. core-decorator装饰器库</h3><p>core-decorator是封装了一些常用功能的装饰器库，采用了es6的装饰器语法，可以装饰类和类的方法。</p>
+<h3 id="二-es6的装饰器语法"><a href="#二-es6的装饰器语法" class="headerlink" title="二. es6的装饰器语法"></a>二. es6的装饰器语法</h3><p>装饰器是一种函数，写成 @ + 函数名，它可以放在类和类方法的定义前面。</p>
+<h4 id="1-默认参数列表"><a href="#1-默认参数列表" class="headerlink" title="1. 默认参数列表"></a>1. 默认参数列表</h4><p>(1) 装饰类</p>
+<p>默认参数列表中包含一个参数，即要装饰的目标类; </p>
+<p>(2) 装饰类的方法 </p>
+<p>默认参数列表中三个参数:第一个是要装饰的类的实例target【但这个时候实例还未生成，所以实际装饰的是类的原型】；</p>
+<p>第二个key是要装饰的属性名；第三个参数descriptor是属性的描述对象【描述对象中包含的属性有：’value’, ‘initializer’, ‘get’, ‘set’, ‘writable’, ‘enumerable’】</p>
+<h3 id="三-主要流程"><a href="#三-主要流程" class="headerlink" title="三. 主要流程"></a>三. 主要流程</h3><p>以防抖的装饰器debounce为例</p>
+<h4 id="1-封装一个装饰器的功能函数handleDescriptor"><a href="#1-封装一个装饰器的功能函数handleDescriptor" class="headerlink" title="1. 封装一个装饰器的功能函数handleDescriptor"></a>1. 封装一个装饰器的功能函数handleDescriptor</h4><p>这里metaFor只是绑定在this对象上、保存定时器ID的对象</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; decorate, metaFor, internalDeprecation &#125; <span class="keyword">from</span> <span class="string">&#x27;./private/utils&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> <span class="variable constant_">DEFAULT_TIMEOUT</span> = <span class="number">300</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">handleDescriptor</span>(<span class="params">target, key, descriptor, [wait = DEFAULT_TIMEOUT, immediate = <span class="literal">false</span>]</span>) &#123;</span><br><span class="line">  <span class="keyword">const</span> callback = descriptor.<span class="property">value</span>;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (<span class="keyword">typeof</span> callback !== <span class="string">&#x27;function&#x27;</span>) &#123;</span><br><span class="line">    <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">SyntaxError</span>(<span class="string">&#x27;Only functions can be debounced&#x27;</span>);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> &#123;</span><br><span class="line">    ...descriptor,</span><br><span class="line">    <span class="title function_">value</span>(<span class="params"></span>) &#123;</span><br><span class="line">      <span class="keyword">const</span> &#123; debounceTimeoutIds &#125; = <span class="title function_">metaFor</span>(<span class="variable language_">this</span>);</span><br><span class="line">      <span class="keyword">const</span> timeout = debounceTimeoutIds[key];</span><br><span class="line">      <span class="keyword">const</span> callNow = immediate &amp;&amp; !timeout;</span><br><span class="line">      <span class="keyword">const</span> args = <span class="variable language_">arguments</span>;</span><br><span class="line"></span><br><span class="line">      <span class="built_in">clearTimeout</span>(timeout);</span><br><span class="line"></span><br><span class="line">      debounceTimeoutIds[key] = <span class="built_in">setTimeout</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">        <span class="keyword">delete</span> debounceTimeoutIds[key];</span><br><span class="line">        <span class="keyword">if</span> (!immediate) &#123;</span><br><span class="line">          callback.<span class="title function_">apply</span>(<span class="variable language_">this</span>, args);</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;, wait);</span><br><span class="line"></span><br><span class="line">      <span class="keyword">if</span> (callNow) &#123;</span><br><span class="line">        callback.<span class="title function_">apply</span>(<span class="variable language_">this</span>, args);</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="2-对外暴露整个装饰器"><a href="#2-对外暴露整个装饰器" class="headerlink" title="2. 对外暴露整个装饰器"></a>2. 对外暴露整个装饰器</h4><p>将功能函数handleDescriptor、默认参数列表作为参数传递给装饰器的工具函数decoratoe， 并对外暴露。</p>
+<p>这里internalDeprecation只是一个在调用时显示是否deprecated的工具函数。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="keyword">function</span> <span class="title function_">debounce</span>(<span class="params">...args</span>) &#123;</span><br><span class="line">  <span class="title function_">internalDeprecation</span>(<span class="string">&#x27;@debounce is deprecated and will be removed shortly. Use @debounce from lodash-decorators.\n\n  https://www.npmjs.com/package/lodash-decorators&#x27;</span>);</span><br><span class="line">  <span class="keyword">return</span> <span class="title function_">decorate</span>(handleDescriptor, args);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="3-装饰器decorate函数的主要逻辑"><a href="#3-装饰器decorate函数的主要逻辑" class="headerlink" title="3. 装饰器decorate函数的主要逻辑"></a>3. 装饰器decorate函数的主要逻辑</h4><p>decorate主要对是否传递额外参数做了一下判断，其中怎么参数涉及的过程还是略微复杂的, </p>
+<p>不明白可以参照 js-learning/decortor/core-decorator-test.js下的实际过程加深了解。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="keyword">function</span> <span class="title function_">isDescriptor</span>(<span class="params">desc</span>) &#123;</span><br><span class="line">  <span class="keyword">if</span> (!desc || !desc.<span class="property">hasOwnProperty</span>) &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">const</span> keys = [<span class="string">&#x27;value&#x27;</span>, <span class="string">&#x27;initializer&#x27;</span>, <span class="string">&#x27;get&#x27;</span>, <span class="string">&#x27;set&#x27;</span>];</span><br><span class="line"></span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span>, l = keys.<span class="property">length</span>; i &lt; l; i++) &#123;</span><br><span class="line">    <span class="keyword">if</span> (desc.<span class="title function_">hasOwnProperty</span>(keys[i])) &#123;</span><br><span class="line">      <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">function</span> <span class="title function_">decorate</span>(<span class="params">handleDescriptor, entryArgs</span>) &#123;</span><br><span class="line">  <span class="keyword">if</span> (<span class="title function_">isDescriptor</span>(entryArgs[entryArgs.<span class="property">length</span> - <span class="number">1</span>])) &#123;</span><br><span class="line">    <span class="comment">// 没有额外参数的情况下，entryArgs就是默认参数列表 [target, key descriptor]</span></span><br><span class="line">    <span class="keyword">return</span> <span class="title function_">handleDescriptor</span>(...entryArgs, []);</span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">function</span> (<span class="params"></span>) &#123;</span><br><span class="line">      <span class="comment">// Array.prototype.slice.call(arguments) 这个是编译时的最外层调用的默认参数列表 [target, key descriptor]</span></span><br><span class="line">      <span class="keyword">return</span> <span class="title function_">handleDescriptor</span>(...<span class="title class_">Array</span>.<span class="property"><span class="keyword">prototype</span></span>.<span class="property">slice</span>.<span class="title function_">call</span>(<span class="variable language_">arguments</span>), entryArgs);</span><br><span class="line">    &#125;;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="参考文献"><a href="#参考文献" class="headerlink" title="参考文献"></a>参考文献</h3><p>[1] <a target="_blank" rel="noopener" href="https://github.com/jayphelps/core-decorators">core-decorator的github地址</a></p>
+<p>[2] <a target="_blank" rel="noopener" href="https://es6.ruanyifeng.com/#docs/decorator">ECMAScript6入门</a></p>
+
+    </div>
+    
+    <div class="post-footer">
+        <div>
+            
+                转载声明：<br/>
+                商业转载请联系作者获得授权, 非商业转载请注明出处 © XinAnXiaoZhan
+                
+            
+        </div>
+        <div>
+            
+        </div>
+    </div>
+</article>
+<div class="article-nav prev-next-wrap clearfix">
+    
+    
+    <a href="/ad2c1b4b.html" class="next-post btn btn-default" title='深浅拷贝'>
+        <span class="hidden-lg">下一篇</span>
+        <span class="hidden-xs">
+            深浅拷贝</span><i class="fa fa-angle-right fa-fw"></i>
+    </a>
+    
+</div>
+
+<div id="comments">
+    
+    
+<div class="utteranc">
+  
+  <script
+    src='https://utteranc.es/client.js'
+    repo='nodisappear/XinAnXiaoZhan'
+    issue-term='pathname'
+    issue-number=''
+    theme='github-light'
+    label=''
+    crossorigin='anonymous'
+    async
+  ></script>
+</div>
+
+
+
+</div>
+
+                </main>
+                
+                    <aside id="article-toc" role="navigation" class="col-md-3">
+    <div class="widget">
+        <h3 class="title">
+            文章目录
+        </h3>
+        
+        <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80-core-decorator%E8%A3%85%E9%A5%B0%E5%99%A8%E5%BA%93"><span class="toc-text">一. core-decorator装饰器库</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C-es6%E7%9A%84%E8%A3%85%E9%A5%B0%E5%99%A8%E8%AF%AD%E6%B3%95"><span class="toc-text">二. es6的装饰器语法</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E9%BB%98%E8%AE%A4%E5%8F%82%E6%95%B0%E5%88%97%E8%A1%A8"><span class="toc-text">1. 默认参数列表</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%89-%E4%B8%BB%E8%A6%81%E6%B5%81%E7%A8%8B"><span class="toc-text">三. 主要流程</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E5%B0%81%E8%A3%85%E4%B8%80%E4%B8%AA%E8%A3%85%E9%A5%B0%E5%99%A8%E7%9A%84%E5%8A%9F%E8%83%BD%E5%87%BD%E6%95%B0handleDescriptor"><span class="toc-text">1. 封装一个装饰器的功能函数handleDescriptor</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E5%AF%B9%E5%A4%96%E6%9A%B4%E9%9C%B2%E6%95%B4%E4%B8%AA%E8%A3%85%E9%A5%B0%E5%99%A8"><span class="toc-text">2. 对外暴露整个装饰器</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-%E8%A3%85%E9%A5%B0%E5%99%A8decorate%E5%87%BD%E6%95%B0%E7%9A%84%E4%B8%BB%E8%A6%81%E9%80%BB%E8%BE%91"><span class="toc-text">3. 装饰器decorate函数的主要逻辑</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E6%96%87%E7%8C%AE"><span class="toc-text">参考文献</span></a></li></ol>
+        
+    </div>
+</aside>
+                
+            </div>
+        </div>
+    </section>
+    <footer class="main-footer">
+    <div class="container">
+        <div class="row">
+        </div>
+    </div>
+</footer>
+<a id="back-to-top" class="icon-btn hide">
+    <i class="fa fa-chevron-up"></i>
+</a>
+    <div class="copyright">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="busuanzi">
+    
+    访问量:
+    <strong id="busuanzi_value_site_pv">
+        <i class="fa fa-spinner fa-spin"></i>
+    </strong>
+    &nbsp; | &nbsp;
+    访客数:
+    <strong id="busuanzi_value_site_uv">
+        <i class="fa fa-spinner fa-spin"></i>
+    </strong>
+    
+</div>
+            </div>
+            <div class="col-sm-12">
+                <span>Copyright &copy;
+                    2021
+                    
+                </span> |
+                <span>
+                    Powered by <a href="//hexo.io" class="copyright-links" target="_blank" rel="nofollow">Hexo</a>
+                </span> |
+                <span>
+                    Theme by <a href="//github.com/shenliyang/hexo-theme-snippet.git" class="copyright-links" target="_blank" rel="nofollow">Snippet</a>
+                </span>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+<script src="/js/app.js?rev=@@hash.js"></script>
+
+</body>
+</html>
