@@ -22,8 +22,9 @@
                 <li>
                     <% } %>
                     <h3>
-                        <%= post.date.format('DD') %><span>
-                            <%= post.date.format('MM') %>月</span>
+                        <span>
+                            <%= post.date.format('MM') %>月 <%= post.date.format('DD') %> 日
+                        </span>
                     </h3>
                     <a href="<%- url_for(post.path) %>" title="<%- post.title %>" target="_blank">
                         <%- post.title %></a>

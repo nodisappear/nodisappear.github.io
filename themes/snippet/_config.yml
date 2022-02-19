@@ -71,6 +71,9 @@ social:
   - name: Github
     icon: git
     href: //github.com/nodisappear
+  - name: 163邮箱
+    icon: envelope-o
+    href: mailto:sygylzb@163.com
 
 ## 文章分类设置
 cate_config:
@@ -108,7 +111,7 @@ branding:
 
 ## 头像
 avatar:
-  img: "./img/head-avatar.jpg"
+  img: "./img/head-avatar-2.jpg"
 
 ## 设置banner背景图片
 banner:
@@ -119,10 +122,12 @@ homePanel: false
 
 ## 缩略图自定义随机图片
 defaultImgs:
-  -
+  ["./img/default (1).jpg", "./img/default (2).jpg", "./img/default (3).jpg", "./img/default (4).jpg", "./img/default (5).jpg", "./img/default (6).jpg",
+   "./img/default (7).jpg", "./img/default (8).jpg", "./img/default (9).jpg", "./img/default (10).jpg", "./img/default (11).jpg"
+  ]
 
 ## 截取文章首页描述字数
-excerptLength: 120
+excerptLength: 248
 
 ## 是否开启文章目录
 toc: true
@@ -222,8 +227,8 @@ uyan:
 
 ## 网站访客统计
 visit_counter:
-  site: false
-  page: false
+  site: true
+  page: true
 
 ## 网站访问统计分析
 

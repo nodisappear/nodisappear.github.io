@@ -1,6 +1,21 @@
 <% page.posts.each(function(post){ %>
+<%
+    var urls = lazyImage(post);
+    var random = Math.floor(Math.random() * (urls.length));
+    if(theme.defaultImgs && theme.defaultImgs.length >0){ 
+        var urls2 = theme.defaultImgs;
+        var random2 = Math.floor(Math.random() * (urls2.length));
+    }
+    <!-- var _photoUrl = post.img || (urls.length > 0 && urls[random]) || (urls2.length > 0 && urls2[random2]) || ''; -->
+    var _photoUrl = post.img || (urls2.length > 0 && urls2[random2]) || '';
+%>
 <a href="<%- url_for(post.path) %>" class="article-container-href">
     <article class="post">
+        <% if(_photoUrl) {%>
+            <div class="post-media">
+                <img class="img-ajax" src="<%- url_for('/img/loading.gif') %>" data-src="<%- url_for(_photoUrl) %>" alt="<%- post.title %>">
+            </div>
+        <% } %>
         <% if(post.img) { %>
         <div class="post-media">
             <img class="img-ajax" src="<%- url_for('/img/loading.gif') %>" data-src="<%- url_for(post.img) %>" alt="<%- post.title %>">
@@ -20,6 +35,31 @@
                 <% } %>
             </p>
             <div class="post-meta"> <!-- &bull; -->
+                <% if(!is_category()){ %>
+                <span class="categories-meta fa-wrap">
+                    <i class="fa fa-folder-open-o"></i>
+                    <%- list_categories(post.categories, {
+                            show_count: false,
+                            style: 'none',
+                            separator: ' '
+                        }) %>
+                </span>
+                <% } %>
+                <% if(!is_tag()){ %>
+                <span class="fa-wrap">
+                    <i class="fa fa-tags"></i>
+                    <span class="tags-meta">
+                        <% if (post.tags && post.tags.length){ %>
+                        <%- list_tags(post.tags, {
+                                    show_count: false,
+                                    style: 'none',
+                                    separator: ' ',
+                                    amount: 1
+                                }) %>
+                        <% } %>
+                    </span>
+                </span>
+                <% } %>
                 <time class="post-date" datetime="" title="">
                     <%- date(post.date,"YYYY.MM.DD") %>
                 </time>
