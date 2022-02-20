@@ -70,7 +70,7 @@
                     <span> , Write By <%- post.author %></span>
                 <% } %>
             </div>
-            <button class="read-btn btn btn-default">阅读全文</button>
+            <a class="article-container-href read-btn btn btn-default" href="<%- url_for(post.path) %>">阅读全文</a>
         </div>
         <% if(theme.homePanel) { %>
         <footer class="post-footer clearfix">
