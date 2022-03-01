@@ -180,7 +180,7 @@
 <h3 id="1-1-什么是WebView"><a href="#1-1-什么是WebView" class="headerlink" title="1.1 什么是WebView"></a>1.1 什么是WebView</h3><p>Android内置webkit内核的高性能浏览器,而WebView则是在这个基础上进行封装后的一个 控件,WebView直译网页视图,我们可以简单的看作一个可以嵌套到界面上的一个浏览器控件. WebView通过 loadUrl 这个API加载 html 文件，如果是加载本地文件直接使用 file://协议【注：在hatom中线上编译后就是将前端资源作为本地静态文件来进行访问】，也可以加载网络资源。</p>
 <h2 id="2-需要注意的问题"><a href="#2-需要注意的问题" class="headerlink" title="2. 需要注意的问题"></a>2. 需要注意的问题</h2><p>移动端H5开发, 采用了 WebView 这个中间件，和真实的浏览器环境还是有很多不一样的，因此会存在很多大大小小的坑，稍不注意就踩进去了。</p>
 <h3 id="2-1-window-location"><a href="#2-1-window-location" class="headerlink" title="2.1 window.location"></a>2.1 window.location</h3><p>浏览器中通常会使用 window.location 来获取网页当前的url, 协议，主机名等内容</p>
-<p><img src="./images/location_1.png" alt="window.location内容"></p>
+<p><img src="/./img/blog-images/location_1.png" alt="window.location内容"></p>
 <p>在webview中，使用 file:// 加载前端资源是，是不能正常使用window.location的。</p>
 <h3 id="2-2-window-localStorage"><a href="#2-2-window-localStorage" class="headerlink" title="2.2 window.localStorage"></a>2.2 window.localStorage</h3><p>ios系统上使用localStorage不会生效，原因是ios上 WebView 是独占进程的，每个WebView都是新的进程，也就是每个WebView都有自己的localstorage, 相互之间不会共享。解决方法就是使用 hatom.storage.setItem 写入手机缓存中。参考：</p>
 <p><a target="_blank" rel="noopener" href="https://hatom2.hikyun.com/doc/h5-developer/api/storage.html">https://hatom2.hikyun.com/doc/h5-developer/api/storage.html</a></p>
