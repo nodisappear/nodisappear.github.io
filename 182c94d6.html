@@ -1,0 +1,327 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+
+<head>
+    <!--Setting-->
+    <meta name="baidu-site-verification" content="code-f6RfR7ByGN" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+    <meta http-equiv="Cache-Control" content="no-siteapp">
+    <meta http-equiv="Cache-Control" content="no-transform">
+    <meta name="renderer" content="webkit|ie-comp|ie-stand">
+    <meta name="apple-mobile-web-app-capable" content="XinAnXiaoZhan">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="format-detection" content="telephone=no,email=no,adress=no">
+    <meta name="browsermode" content="application">
+    <meta name="screen-orientation" content="portrait">
+    <meta name="theme-version" content="1.3.0">
+    <meta name="root" content="/">
+    <link rel="dns-prefetch" href="http://example.com">
+    <!--SEO-->
+
+<meta name="keywords" content="编程语言" />
+
+
+<meta name="description" content="1.JavaScript是单线程语言Javascript语言是一种单线程语言，所有任务都在一个线程上完成。单线程如果遇到某个任务比较耗时，比如涉及很多I/O操作：读取文件、HTTP请求、SQL查..." />
+
+
+<meta name="robots" content="all" />
+<meta name="google" content="all" />
+<meta name="googlebot" content="all" />
+<meta name="verify" content="all" />
+    <!--Title-->
+
+<title>
+    
+    javascript事件循环机制 |
+    
+    XinAnXiaoZhan
+</title>
+
+<link rel="alternate" href="/atom.xml" title="XinAnXiaoZhan" type="application/atom+xml">
+
+
+<link rel="icon" href="./img/page-favicon.jpg">
+
+    
+
+
+<link rel="stylesheet" href="/css/bootstrap.min.css?rev=3.3.7.css">
+<link rel="stylesheet" href="/css/font-awesome.min.css?rev=4.7.0.css">
+<link rel="stylesheet" href="/css/style.css?rev=@@hash.css">
+
+    
+<div class="hide">
+    <script type="text/javascript">
+    var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");
+    document.write(unescape("%3Cspan class='cnzz_stat_icon_1263868967 hide' %3E%3Cscript%20src%3D%22https%3A%2F%2Fs95.cnzz.com%2Fz_stat.php%3Fweb_id%3D1272564536%22%3E%3C%2Fscript%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s19.cnzz.com/z_stat.php%3Fid%3D1263868967%26show%3Dpic1' type='text/javascript'%3E%3C/script%3E"));
+    </script>
+</div>
+
+
+
+
+    
+
+<meta name="generator" content="Hexo 5.4.1"></head>
+<!--[if lte IE 8]>
+<style>
+    html{ font-size: 1em }
+</style>
+<![endif]-->
+<!--[if lte IE 9]>
+<div style="ie">你使用的浏览器版本过低，为了你更好的阅读体验，请更新浏览器的版本或者使用其他现代浏览器，比如Chrome、Firefox、Safari等。</div>
+<![endif]-->
+<body>
+    <header class="main-header">
+    <div class="main-header-box">
+        <div class="header-avatar">
+            <img class="img-responsive center-block" src="/./img/head-avatar-2.jpg" alt="头像">
+        </div>
+        <div class="main-header-title">
+            <span>心安小栈</span>
+        </div>
+    </div>
+</header>
+    <nav class="main-navigation">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="navbar-header"><span class="nav-toggle-button collapsed pull-right" data-toggle="collapse" data-target="#main-menu" id="mnav">
+                    <span class="sr-only"></span>
+                    <i class="fa fa-bars"></i>
+                </span>
+                </div>
+                <div class="collapse navbar-collapse" id="main-menu">
+                    <ul class="menu">
+                           
+                        <li role="presentation" class="text-center menus">
+                            <a href="/"><i class="fa "></i>
+                                首页</a>
+                        </li>
+                           
+                        <li role="presentation" class="text-center menus">
+                            <a href="/categories/"><i class="fa "></i>
+                                分类</a>
+                        </li>
+                           
+                        <li role="presentation" class="text-center menus">
+                            <a href="/tags/"><i class="fa "></i>
+                                标签</a>
+                        </li>
+                           
+                        <li role="presentation" class="text-center menus">
+                            <a href="/archives/"><i class="fa "></i>
+                                归档</a>
+                        </li>
+                           
+                        <li role="presentation" class="text-center menus">
+                            <a href="/about/"><i class="fa "></i>
+                                关于</a>
+                        </li>
+                        
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
+    <section class="content-wrap">
+        <div class="container">
+            <div class="row">
+                <main class="col-md-9 main-content m-post">
+                    <p id="process"></p>
+<article class="post">
+    <div class="post-head">
+        <h1 id="javascript事件循环机制">
+            
+            javascript事件循环机制
+            
+        </h1>
+        <div class="post-meta">
+    
+    <span class="categories-meta fa-wrap">
+        <i class="fa fa-folder-open-o"></i>
+        <a class="category-link" href="/categories/%E6%8A%80%E6%9C%AF/">技术</a>
+    </span>
+    
+    
+    <span class="fa-wrap">
+        <i class="fa fa-tags"></i>
+        <span class="tags-meta">
+            
+            <a class="tag-none-link" href="/tags/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/" rel="tag">编程语言</a>
+            
+        </span>
+    </span>
+    
+    
+    
+    <span class="fa-wrap">
+        <i class="fa fa-clock-o"></i>
+        <span class="date-meta">
+            2022/02/21</span>
+    </span>
+    
+    <span class="fa-wrap">
+        <i class="fa fa-eye"></i>
+        <span id="busuanzi_value_page_pv"></span>
+    </span>
+    
+    
+</div>
+        
+        
+    </div>
+    
+    <div class="post-body post-content">
+        <h2 id="1-JavaScript是单线程语言"><a href="#1-JavaScript是单线程语言" class="headerlink" title="1.JavaScript是单线程语言"></a>1.JavaScript是单线程语言</h2><p>Javascript语言是一种单线程语言，所有任务都在一个线程上完成。单线程如果遇到某个任务比较耗时，比如涉及很多I/O操作：读取文件、HTTP请求、SQL查询等，线程的大部分运行时间都会在空等I/O操作的返回结果。Event Loop就是为了解决单线程语言的这个问题。</p>
+<h2 id="2-事件循环Event-Loop"><a href="#2-事件循环Event-Loop" class="headerlink" title="2.事件循环Event Loop"></a>2.事件循环Event Loop</h2><p>为了解决JavaScript这种单线程语言带来的堵塞问题，Javascript程序会在程序中设置两个线程：一个负责程序本身的运行，称为主线程；另一个负责主线程与其他进程（主要是各种I/O操作）的通信，被称为”Event Loop线程”。Event Loop线程中主线程从任务队列中读取事件，这个过程是循环不断得，所以整个的这种运行机制又被称为事件循环。在事件循环中，异步事件并不会放到当前任务执行队列，而是会被挂起，放入另外一个回调队列。当前的任务队列执行结束以后，JavaScript引擎回去检查回调队列中是否有等待执行的任务【Perform a microtask checkpoint, 即执行微任务检查点】，若有会把第一个任务加入执行队列，然后不断的重复这个过程。JavaScrip是单线程，因此同一个执行队列产生的微任务总是会在宏任务之前被执行。 </p>
+<h3 id="2-1-宏任务与微任务"><a href="#2-1-宏任务与微任务" class="headerlink" title="2.1 宏任务与微任务"></a>2.1 宏任务与微任务</h3><p>宏任务必然是在微任务之后才执行。<br>宏任务：</p>
+<ul>
+<li>setTimeout</li>
+<li>setInterval</li>
+<li>I/O</li>
+<li>setImmediate[在浏览器中是微任务，在Node中是宏任务]</li>
+<li>requestAnimationFrame[在浏览器中是宏任务，在Node中是微任务]</li>
+</ul>
+<p>微任务：</p>
+<ul>
+<li>Promise.then / catch / finally / async/await本质上还是基于Promise的一些封装</li>
+<li>process.nextTick[在Node中是微任务]</li>
+<li>MutationObserver[在浏览器中是微任务]</li>
+</ul>
+<h2 id="3-javascript执行上下文和执行栈"><a href="#3-javascript执行上下文和执行栈" class="headerlink" title="3. javascript执行上下文和执行栈"></a>3. javascript执行上下文和执行栈</h2><p>JavaScript 中有三种执行上下文类型：</p>
+<ul>
+<li><p>全局执行上下文 — 这是默认或者说基础的上下文，任何不在函数内部的代码都在全局上下文中。它会执行两件事：创建一个全局的 window 对象（浏览器的情况下），并且设置 this 的值等于这个全局对象。一个程序中只会有一个全局执行上下文。</p>
+</li>
+<li><p>函数执行上下文 — 每当一个函数被调用时, 都会为该函数创建一个新的上下文。每个函数都有它自己的执行上下文，不过是在函数被调用时创建的。函数上下文可以有任意多个。每当一个新的执行上下文被创建，它会按定义的顺序（将在后文讨论）执行一系列步骤。</p>
+</li>
+<li><p>Eval 函数执行上下文 — 执行在 eval 函数内部的代码也会有它属于自己的执行上下文，但由于 JavaScript 开发者并不经常使用 eval，所以在这里我不会讨论它。</p>
+</li>
+</ul>
+<p>执行栈，也就是在其它编程语言中所说的“调用栈”，是一种拥有 LIFO（后进先出）数据结构的栈，被用来存储代码运行时创建的所有执行上下文。当 JavaScript 引擎第一次遇到你的脚本时，它会创建一个全局的执行上下文并且压入当前执行栈。每当引擎遇到一个函数调用，它会为该函数创建一个新的执行上下文并压入栈的顶部。<br>引擎会执行那些执行上下文位于栈顶的函数。当该函数执行结束时，执行上下文从栈中弹出，控制流程到达当前栈中的下一个上下文。</p>
+<h2 id="4-示例"><a href="#4-示例" class="headerlink" title="4. 示例"></a>4. 示例</h2><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="number">1</span>);</span><br><span class="line"><span class="built_in">setTimeout</span>(<span class="function">() =&gt;</span> &#123;<span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="number">2</span>)&#125;, <span class="number">1000</span>)</span><br><span class="line"><span class="keyword">async</span> <span class="keyword">function</span> <span class="title function_">fn</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="number">3</span>)</span><br><span class="line">    <span class="built_in">setTimeout</span>(<span class="function">() =&gt;</span> &#123;<span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="number">4</span>)&#125;, <span class="number">20</span>)</span><br><span class="line">    <span class="keyword">return</span> <span class="title class_">Promise</span>.<span class="title function_">resolve</span>()</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">async</span> <span class="keyword">function</span> <span class="title function_">run</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="number">5</span>)</span><br><span class="line">    <span class="keyword">await</span> <span class="title function_">fn</span>()</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="number">6</span>)</span><br><span class="line">&#125;</span><br><span class="line"><span class="title function_">run</span>()</span><br><span class="line"><span class="keyword">for</span>(<span class="keyword">let</span> i=<span class="number">0</span>; i&lt;<span class="number">50000000000</span>; i++) &#123;&#125;</span><br><span class="line"><span class="built_in">setTimeout</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="number">7</span>)</span><br><span class="line">    <span class="keyword">new</span> <span class="title class_">Promise</span>(<span class="function"><span class="params">resolve</span> =&gt;</span> &#123;</span><br><span class="line">        <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="number">8</span>)</span><br><span class="line">        <span class="title function_">resolve</span>()</span><br><span class="line">    &#125;).<span class="title function_">then</span>(<span class="function">() =&gt;</span> &#123;<span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="number">9</span>)&#125;)</span><br><span class="line">&#125;, <span class="number">0</span>)</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="number">10</span>)</span><br></pre></td></tr></table></figure>
+
+    </div>
+    
+    <div class="post-footer">
+        <div>
+            
+                转载声明：<br/>
+                商业转载请联系作者获得授权, 非商业转载请注明出处 © XinAnXiaoZhan
+                
+            
+        </div>
+        <div>
+            
+        </div>
+    </div>
+</article>
+<div class="article-nav prev-next-wrap clearfix">
+    
+    <a href="/8f9b8ba.html" class="pre-post btn btn-default" title='H5移动端开发'>
+        <i class="fa fa-angle-left fa-fw"></i><span class="hidden-lg">上一篇</span>
+        <span class="hidden-xs">
+            H5移动端开发</span>
+    </a>
+    
+    
+    <a href="/b483b17d.html" class="next-post btn btn-default" title='core-decorator源码解析'>
+        <span class="hidden-lg">下一篇</span>
+        <span class="hidden-xs">
+            core-decorator源码解析</span><i class="fa fa-angle-right fa-fw"></i>
+    </a>
+    
+</div>
+
+<div id="comments">
+    
+    
+<div class="utteranc">
+  
+  <script
+    src='https://utteranc.es/client.js'
+    repo='nodisappear/XinAnXiaoZhan'
+    issue-term='pathname'
+    issue-number=''
+    theme='github-light'
+    label=''
+    crossorigin='anonymous'
+    async
+  ></script>
+</div>
+
+
+
+</div>
+
+                </main>
+                
+                    <aside id="article-toc" role="navigation" class="col-md-3">
+    <div class="widget">
+        <h3 class="title">
+            文章目录
+        </h3>
+        
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-JavaScript%E6%98%AF%E5%8D%95%E7%BA%BF%E7%A8%8B%E8%AF%AD%E8%A8%80"><span class="toc-text">1.JavaScript是单线程语言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AFEvent-Loop"><span class="toc-text">2.事件循环Event Loop</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-%E5%AE%8F%E4%BB%BB%E5%8A%A1%E4%B8%8E%E5%BE%AE%E4%BB%BB%E5%8A%A1"><span class="toc-text">2.1 宏任务与微任务</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-javascript%E6%89%A7%E8%A1%8C%E4%B8%8A%E4%B8%8B%E6%96%87%E5%92%8C%E6%89%A7%E8%A1%8C%E6%A0%88"><span class="toc-text">3. javascript执行上下文和执行栈</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-%E7%A4%BA%E4%BE%8B"><span class="toc-text">4. 示例</span></a></li></ol>
+        
+    </div>
+</aside>
+                
+            </div>
+        </div>
+    </section>
+    <footer class="main-footer">
+    <div class="container">
+        <div class="row">
+        </div>
+    </div>
+</footer>
+<a id="back-to-top" class="icon-btn hide">
+    <i class="fa fa-chevron-up"></i>
+</a>
+    <div class="copyright">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="busuanzi">
+    
+    访问量:
+    <strong id="busuanzi_value_site_pv">
+        <i class="fa fa-spinner fa-spin"></i>
+    </strong>
+    &nbsp; | &nbsp;
+    访客数:
+    <strong id="busuanzi_value_site_uv">
+        <i class="fa fa-spinner fa-spin"></i>
+    </strong>
+    
+</div>
+            </div>
+            <div class="col-sm-12">
+                <span>Copyright &copy;
+                    2021
+                    
+                </span> |
+                <span>
+                    Powered by <a href="//hexo.io" class="copyright-links" target="_blank" rel="nofollow">Hexo</a>
+                </span> |
+                <span>
+                    Theme by <a href="//github.com/shenliyang/hexo-theme-snippet.git" class="copyright-links" target="_blank" rel="nofollow">Snippet</a>
+                </span>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+<script src="/js/app.js?rev=@@hash.js"></script>
+
+</body>
+</html>
