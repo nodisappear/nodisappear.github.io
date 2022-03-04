@@ -1,3 +1,11 @@
+---
+title: Vue源码分析2
+categories: 技术
+tags: 源码
+author: Zyx
+abbrlink: 8dbd14e0
+date: 2022-03-03 10:32:31
+---
 ## 一. Vue实例的生命周期
 1. 初始化阶段：  
 new Vue() -> created  

@@ -5,7 +5,7 @@ tags:
   - 编程语言
 comments: true
 author: Lzb
-abbrlink: b483b17d
+abbrlink: 182c94d6
 date: 2022-02-21 01:19:00
 ---
 ## 1.JavaScript是单线程语言
