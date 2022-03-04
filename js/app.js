@@ -10,7 +10,6 @@ window.onload = function () {
     $commentsCounter = document.getElementById("comments-count"),
     $gitcomment = document.getElementById("gitcomment"),
     $backToTop = document.getElementById("back-to-top"),
-    $toc = document.getElementById("article-toc"),
     timer = null;
 
   //设备判断
@@ -96,19 +95,6 @@ window.onload = function () {
 
   //监听滚动事件
   window.addEventListener("scroll", function () {
-    if ($toc) {
-      var top = $toc.offsetTop;
-      var left = $toc.offsetLeft;
-      var width = $toc.offsetWidth;
-      if (getScrollTop() <= top) {
-        $toc.style = "";
-      } else {
-        $toc.style.position = "fixed";
-        $toc.style.top = "5px";
-        $toc.style.left = left + "px";
-        $toc.style.width = width + "px";
-      }
-    }
     clearTimeout(timer);
     timer = setTimeout(function fn() {
       scrollCallback();
