@@ -123,9 +123,7 @@ homePanel: false
 ## 缩略图自定义随机图片
 defaultImgs:
   ["./img/default (1).jpg", "./img/default (2).jpg", "./img/default (3).jpg", "./img/default (4).jpg", "./img/default (5).jpg", "./img/default (6).jpg",
-   "./img/default (7).jpg", "./img/default (8).jpg", "./img/default (9).jpg", "./img/default (10).jpg", "./img/default (11).jpg",
-   "./img/default (12).jpg", "./img/default (13).jpg", "./img/default (14).jpg", "./img/default (15).jpg", "./img/default (16).jpg",
-   "./img/default (17).jpg", "./img/default (18).jpg", "./img/default (19).jpg"
+   "./img/default (7).jpg", "./img/default (8).jpg", "./img/default (9).jpg", "./img/default (10).jpg", "./img/default (11).jpg"
   ]
 
 ## 截取文章首页描述字数

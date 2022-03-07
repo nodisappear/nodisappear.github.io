@@ -875,12 +875,16 @@ pre {
 .prev-next-wrap .next-post {
   float: right;
 }
+.sidebar {
+  position: sticky;
+  top: 0;
+}
 .sidebar .widget {
   background: #fff;
   padding: 16px 25px;
 }
 .sidebar .widget:nth-last-child(1) {
-  height: 589px;
+  height: 305px;
 }
 .sidebar .widget ul {
   padding: 0;
@@ -1091,6 +1095,7 @@ pre {
    toc
 ====================================================*/
 #article-toc {
+  position: sticky;
   padding-top: 1em;
   background-color: #fff;
   top: 0;
