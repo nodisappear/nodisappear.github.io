@@ -1,0 +1,307 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+
+<head>
+    <!--Setting-->
+    <meta name="baidu-site-verification" content="code-f6RfR7ByGN" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+    <meta http-equiv="Cache-Control" content="no-siteapp">
+    <meta http-equiv="Cache-Control" content="no-transform">
+    <meta name="renderer" content="webkit|ie-comp|ie-stand">
+    <meta name="apple-mobile-web-app-capable" content="XinAnXiaoZhan">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="format-detection" content="telephone=no,email=no,adress=no">
+    <meta name="browsermode" content="application">
+    <meta name="screen-orientation" content="portrait">
+    <meta name="theme-version" content="1.3.0">
+    <meta name="root" content="/">
+    <link rel="dns-prefetch" href="http://example.com">
+    <!--SEO-->
+
+<meta name="keywords" content="源码解析" />
+
+
+<meta name="description" content="这个库的想法很简单，就是 window.onerror 监听浏览器控制台的报错事件，把报错信息【控制台输出错误信息，以及出错的文件，行号，堆栈信息】通过ajax直接上传到服务器端，解决项目现场，..." />
+
+
+<meta name="robots" content="all" />
+<meta name="google" content="all" />
+<meta name="googlebot" content="all" />
+<meta name="verify" content="all" />
+    <!--Title-->
+
+<title>
+    
+    js-log-report源码解析 |
+    
+    XinAnXiaoZhan
+</title>
+
+<link rel="alternate" href="/atom.xml" title="XinAnXiaoZhan" type="application/atom+xml">
+
+
+<link rel="icon" href="./img/page-favicon.jpg">
+
+    
+
+
+<link rel="stylesheet" href="/css/bootstrap.min.css?rev=3.3.7.css">
+<link rel="stylesheet" href="/css/font-awesome.min.css?rev=4.7.0.css">
+<link rel="stylesheet" href="/css/style.css?rev=@@hash.css">
+
+    
+<div class="hide">
+    <script type="text/javascript">
+    var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");
+    document.write(unescape("%3Cspan class='cnzz_stat_icon_1263868967 hide' %3E%3Cscript%20src%3D%22https%3A%2F%2Fs95.cnzz.com%2Fz_stat.php%3Fweb_id%3D1272564536%22%3E%3C%2Fscript%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s19.cnzz.com/z_stat.php%3Fid%3D1263868967%26show%3Dpic1' type='text/javascript'%3E%3C/script%3E"));
+    </script>
+</div>
+
+
+
+
+    
+
+<meta name="generator" content="Hexo 5.4.1"></head>
+<!--[if lte IE 8]>
+<style>
+    html{ font-size: 1em }
+</style>
+<![endif]-->
+<!--[if lte IE 9]>
+<div style="ie">你使用的浏览器版本过低，为了你更好的阅读体验，请更新浏览器的版本或者使用其他现代浏览器，比如Chrome、Firefox、Safari等。</div>
+<![endif]-->
+<body>
+    <header class="main-header">
+    <div class="main-header-box">
+        <div class="header-avatar">
+            <img class="img-responsive center-block" src="/./img/head-avatar-2.jpg" alt="头像">
+        </div>
+        <div class="main-header-title">
+            <span>心安小栈</span>
+        </div>
+    </div>
+</header>
+    <nav class="main-navigation">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="navbar-header"><span class="nav-toggle-button collapsed pull-right" data-toggle="collapse" data-target="#main-menu" id="mnav">
+                    <span class="sr-only"></span>
+                    <i class="fa fa-bars"></i>
+                </span>
+                </div>
+                <div class="collapse navbar-collapse" id="main-menu">
+                    <ul class="menu">
+                           
+                        <li role="presentation" class="text-center menus">
+                            <a href="/"><i class="fa "></i>
+                                首页</a>
+                        </li>
+                           
+                        <li role="presentation" class="text-center menus">
+                            <a href="/categories/"><i class="fa "></i>
+                                分类</a>
+                        </li>
+                           
+                        <li role="presentation" class="text-center menus">
+                            <a href="/tags/"><i class="fa "></i>
+                                标签</a>
+                        </li>
+                           
+                        <li role="presentation" class="text-center menus">
+                            <a href="/archives/"><i class="fa "></i>
+                                归档</a>
+                        </li>
+                           
+                        <li role="presentation" class="text-center menus">
+                            <a href="/about/"><i class="fa "></i>
+                                关于</a>
+                        </li>
+                        
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
+    <section class="content-wrap">
+        <div class="container">
+            <div class="row">
+                <main class="col-md-9 main-content m-post">
+                    <p id="process"></p>
+<article class="post">
+    <div class="post-head">
+        <h1 id="js-log-report源码解析">
+            
+            js-log-report源码解析
+            
+        </h1>
+        <div class="post-meta">
+    
+    <span class="categories-meta fa-wrap">
+        <i class="fa fa-folder-open-o"></i>
+        <a class="category-link" href="/categories/%E6%8A%80%E6%9C%AF/">技术</a>
+    </span>
+    
+    
+    <span class="fa-wrap">
+        <i class="fa fa-tags"></i>
+        <span class="tags-meta">
+            
+            <a class="tag-none-link" href="/tags/%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/" rel="tag">源码解析</a>
+            
+        </span>
+    </span>
+    
+    
+    
+    <span class="fa-wrap">
+        <i class="fa fa-clock-o"></i>
+        <span class="date-meta">
+            2022/06/12</span>
+    </span>
+    
+    <span class="fa-wrap">
+        <i class="fa fa-eye"></i>
+        <span id="busuanzi_value_page_pv"></span>
+    </span>
+    
+    
+</div>
+        
+        
+    </div>
+    
+    <div class="post-body post-content">
+        <p>这个库的想法很简单，就是 window.onerror 监听浏览器控制台的报错事件，把报错信息【控制台输出错误信息，以及出错的文件，行号，堆栈信息】通过ajax直接上传到服务器端，解决项目现场，移动端调试比较难的问题。</p>
+<p>github地址：【 <a target="_blank" rel="noopener" href="https://github.com/ecitlm/js-log-report">https://github.com/ecitlm/js-log-report</a> 】</p>
+<h1 id="1-js-log-report的使用方法"><a href="#1-js-log-report的使用方法" class="headerlink" title="1. js-log-report的使用方法"></a>1. js-log-report的使用方法</h1><h2 id="1-1-包含哪些报错信息"><a href="#1-1-包含哪些报错信息" class="headerlink" title="1.1 包含哪些报错信息"></a>1.1 包含哪些报错信息</h2><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> defaults = &#123;</span><br><span class="line">  <span class="attr">ua</span>: <span class="variable language_">window</span>.<span class="property">navigator</span>.<span class="property">userAgent</span>,</span><br><span class="line">  <span class="attr">browser</span>: <span class="string">&#x27;&#x27;</span>,</span><br><span class="line">  <span class="attr">os</span>: <span class="string">&#x27;&#x27;</span>,</span><br><span class="line">  <span class="attr">osVersion</span>: <span class="string">&#x27;&#x27;</span>,</span><br><span class="line">  <span class="attr">errUrl</span>: <span class="variable language_">window</span>.<span class="property">location</span>.<span class="property">href</span>,</span><br><span class="line">  <span class="attr">msg</span>: <span class="string">&#x27;&#x27;</span>, <span class="comment">// 错误的具体信息</span></span><br><span class="line">  <span class="attr">url</span>: <span class="string">&#x27;&#x27;</span>, <span class="comment">// 错误所在的url</span></span><br><span class="line">  <span class="attr">line</span>: <span class="string">&#x27;&#x27;</span>, <span class="comment">// 错误所在的行</span></span><br><span class="line">  <span class="attr">col</span>: <span class="string">&#x27;&#x27;</span>, <span class="comment">// 错误所在的列</span></span><br><span class="line">  <span class="attr">error</span>: <span class="string">&#x27;&#x27;</span> <span class="comment">// 具体的error对象</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="1-2-上传接口形式"><a href="#1-2-上传接口形式" class="headerlink" title="1.2 上传接口形式"></a>1.2 上传接口形式</h2><p>上报错误日志的ajax接口形式: 接口的url自定义，post请求, 请求数据以 json 形式放在 body 中。</p>
+<h2 id="1-3-数据库设置"><a href="#1-3-数据库设置" class="headerlink" title="1.3 数据库设置"></a>1.3 数据库设置</h2><p>服务端需要执行一下下面的SQL语句：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">DROP TABLE IF EXISTS `j_log`;</span><br><span class="line">CREATE TABLE `j_log` (</span><br><span class="line">  `id` int(10) NOT NULL AUTO_INCREMENT COMMENT &#x27;id号&#x27;,</span><br><span class="line">  `os_version` char(10) DEFAULT NULL COMMENT &#x27;系统版本号&#x27;,</span><br><span class="line">  `msg` varchar(255) DEFAULT NULL COMMENT &#x27;错误信息&#x27;,</span><br><span class="line">  `error_url` varchar(255) DEFAULT NULL COMMENT &#x27;错误所在的url&#x27;,</span><br><span class="line">  `line` int(10) DEFAULT NULL COMMENT &#x27;错误所在的行&#x27;,</span><br><span class="line">  `col` int(10) DEFAULT NULL COMMENT &#x27;错误所在的列&#x27;,</span><br><span class="line">  `error` varchar(255) DEFAULT NULL COMMENT &#x27;具体的error对象&#x27;,</span><br><span class="line">  `url` varchar(255) DEFAULT NULL,</span><br><span class="line">  `browser` varchar(255) DEFAULT NULL COMMENT &#x27;浏览器类型&#x27;,</span><br><span class="line">  `product_name` char(255) CHARACTER SET utf8 DEFAULT &#x27;&#x27; COMMENT &#x27;产品名称&#x27;,</span><br><span class="line">  `error_time` char(20) DEFAULT NULL COMMENT &#x27;时间戳&#x27;,</span><br><span class="line">  `os` char(10) DEFAULT NULL COMMENT &#x27;系统类型&#x27;,</span><br><span class="line">  `extend` varchar(255) DEFAULT NULL COMMENT &#x27;业务扩展字段、保存JSON字符串&#x27;,</span><br><span class="line">  `ua` varchar(255) DEFAULT NULL,</span><br><span class="line">  PRIMARY KEY (`id`)</span><br><span class="line">) ENGINE=MyISAM AUTO_INCREMENT=55 DEFAULT CHARSET=utf8;</span><br></pre></td></tr></table></figure>
+
+<h1 id="2-js-log-report的主要流程"><a href="#2-js-log-report的主要流程" class="headerlink" title="2. js-log-report的主要流程"></a>2. js-log-report的主要流程</h1><p>（1） 取window.onerror中的报错信息, 这里会把3层堆栈报错信息上传</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable language_">window</span>.<span class="property">onerror</span> = <span class="keyword">function</span> (<span class="params">msg, url, line, col, error</span>) &#123;</span><br><span class="line">      <span class="comment">// 采用异步的方式,避免阻塞</span></span><br><span class="line">      <span class="built_in">setTimeout</span>(<span class="keyword">function</span> (<span class="params"></span>) &#123;</span><br><span class="line">        <span class="comment">// 不一定所有浏览器都支持col参数，如果不支持就用window.event来兼容</span></span><br><span class="line">        col = col || (<span class="variable language_">window</span>.<span class="property">event</span> &amp;&amp; <span class="variable language_">window</span>.<span class="property">event</span>.<span class="property">errorCharacter</span>) || <span class="number">0</span></span><br><span class="line">        defaults.<span class="property">url</span> = url</span><br><span class="line">        defaults.<span class="property">line</span> = line</span><br><span class="line">        defaults.<span class="property">col</span> = col</span><br><span class="line">        <span class="keyword">if</span> (error &amp;&amp; error.<span class="property">stack</span>) &#123;</span><br><span class="line">          <span class="comment">// 如果浏览器有堆栈信息，直接使用</span></span><br><span class="line">          defaults.<span class="property">msg</span> = error.<span class="property">stack</span>.<span class="title function_">toString</span>()</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (<span class="variable language_">arguments</span>.<span class="property">callee</span>) &#123;</span><br><span class="line">          <span class="comment">// 尝试通过callee拿堆栈信息</span></span><br><span class="line">          <span class="keyword">var</span> ext = []</span><br><span class="line">          <span class="keyword">var</span> fn = <span class="variable language_">arguments</span>.<span class="property">callee</span>.<span class="property">caller</span></span><br><span class="line">          <span class="keyword">var</span> floor = <span class="number">3</span> <span class="comment">// 这里只拿三层堆栈信息</span></span><br><span class="line">          <span class="keyword">while</span> (fn &amp;&amp; (--floor &gt; <span class="number">0</span>)) &#123;</span><br><span class="line">            ext.<span class="title function_">push</span>(fn.<span class="title function_">toString</span>())</span><br><span class="line">            <span class="keyword">if</span> (fn === fn.<span class="property">caller</span>) &#123;</span><br><span class="line">              <span class="keyword">break</span><span class="comment">// 如果有环</span></span><br><span class="line">            &#125;</span><br><span class="line">            fn = fn.<span class="property">caller</span></span><br><span class="line">          &#125;</span><br><span class="line">          defaults.<span class="property">msg</span> = ext.<span class="title function_">join</span>(<span class="string">&#x27;,&#x27;</span>)</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// 合并上报的数据，包括默认上报的数据和自定义上报的数据</span></span><br><span class="line">        <span class="keyword">var</span> reportData = <span class="title function_">extendObj</span>(params.<span class="property">data</span> || &#123;&#125;, defaults)</span><br><span class="line">        <span class="variable language_">console</span>.<span class="title function_">log</span>(reportData)</span><br><span class="line"> ......</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>（2）用浏览器自带的 XMLHttpRequest 将报错数据上报， 不用依赖任何第三方库</p>
+<h2 id="2-1-自己封装的ajax库"><a href="#2-1-自己封装的ajax库" class="headerlink" title="2.1 自己封装的ajax库"></a>2.1 自己封装的ajax库</h2><p>自己封装的ajax库, 在浏览器上运行，主要用到了浏览器的 XMLHttpRequest API，从中可以看到XMLHttpRequest的用法。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">  <span class="keyword">function</span> <span class="title function_">ajax</span> (options) &#123;</span><br><span class="line">    options = options || &#123;&#125;</span><br><span class="line">    options.<span class="property">type</span> = (options.<span class="property">type</span> || <span class="string">&#x27;GET&#x27;</span>).<span class="title function_">toUpperCase</span>()</span><br><span class="line">    options.<span class="property">dataType</span> = options.<span class="property">dataType</span> || <span class="string">&#x27;json&#x27;</span></span><br><span class="line">    <span class="keyword">var</span> params = <span class="title function_">formatParams</span>(options.<span class="property">data</span>)</span><br><span class="line">    <span class="keyword">if</span> (<span class="variable language_">window</span>.<span class="property">XMLHttpRequest</span>) &#123;</span><br><span class="line">      <span class="keyword">var</span> xhr = <span class="keyword">new</span> <span class="title class_">XMLHttpRequest</span>()</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      <span class="keyword">var</span> xhr = <span class="keyword">new</span> <span class="title class_">ActiveXObject</span>(<span class="string">&#x27;Microsoft.XMLHTTP&#x27;</span>)</span><br><span class="line">    &#125;</span><br><span class="line">    xhr.<span class="property">onreadystatechange</span> = <span class="keyword">function</span> (<span class="params"></span>) &#123;</span><br><span class="line">      <span class="keyword">if</span> (xhr.<span class="property">readyState</span> == <span class="number">4</span>) &#123;</span><br><span class="line">        <span class="keyword">var</span> status = xhr.<span class="property">status</span></span><br><span class="line">        <span class="keyword">if</span> (status &gt;= <span class="number">200</span> &amp;&amp; status &lt; <span class="number">300</span>) &#123;</span><br><span class="line">          options.<span class="property">success</span> &amp;&amp; options.<span class="title function_">success</span>(xhr.<span class="property">responseText</span>, xhr.<span class="property">responseXML</span>)</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">          options.<span class="property">fail</span> &amp;&amp; options.<span class="title function_">fail</span>(status)</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (options.<span class="property">type</span> == <span class="string">&#x27;GET&#x27;</span>) &#123;</span><br><span class="line">      xhr.<span class="title function_">open</span>(<span class="string">&#x27;GET&#x27;</span>, options.<span class="property">url</span> + <span class="string">&#x27;?&#x27;</span> + params, <span class="literal">true</span>)</span><br><span class="line">      xhr.<span class="title function_">send</span>(<span class="literal">null</span>)</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (options.<span class="property">type</span> == <span class="string">&#x27;POST&#x27;</span>) &#123;</span><br><span class="line">      xhr.<span class="title function_">open</span>(<span class="string">&#x27;POST&#x27;</span>, options.<span class="property">url</span>, <span class="literal">true</span>)</span><br><span class="line">      <span class="comment">// 设置表单提交时的内容类型</span></span><br><span class="line">      xhr.<span class="title function_">setRequestHeader</span>(<span class="string">&#x27;Content-Type&#x27;</span>, <span class="string">&#x27;application/x-www-form-urlencoded&#x27;</span>)</span><br><span class="line">      xhr.<span class="title function_">send</span>(params)</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+    </div>
+    
+    <div class="post-footer">
+        <div>
+            
+                转载声明：<br/>
+                商业转载请联系作者获得授权, 非商业转载请注明出处 © XinAnXiaoZhan
+                
+            
+        </div>
+        <div>
+            
+        </div>
+    </div>
+</article>
+<div class="article-nav prev-next-wrap clearfix">
+    
+    
+    <a href="/8f9b8ba.html" class="next-post btn btn-default" title='H5移动端开发'>
+        <span class="hidden-lg">下一篇</span>
+        <span class="hidden-xs">
+            H5移动端开发</span><i class="fa fa-angle-right fa-fw"></i>
+    </a>
+    
+</div>
+
+<div id="comments">
+    
+    
+<div class="utteranc">
+  
+  <script
+    src='https://utteranc.es/client.js'
+    repo='nodisappear/XinAnXiaoZhan'
+    issue-term='pathname'
+    issue-number=''
+    theme='github-light'
+    label=''
+    crossorigin='anonymous'
+    async
+  ></script>
+</div>
+
+
+
+</div>
+
+                </main>
+                
+                    <aside id="article-toc" role="navigation" class="col-md-3">
+    <div class="widget">
+        <h3 class="title">
+            文章目录
+        </h3>
+        
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#1-js-log-report%E7%9A%84%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95"><span class="toc-text">1. js-log-report的使用方法</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-1-%E5%8C%85%E5%90%AB%E5%93%AA%E4%BA%9B%E6%8A%A5%E9%94%99%E4%BF%A1%E6%81%AF"><span class="toc-text">1.1 包含哪些报错信息</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-2-%E4%B8%8A%E4%BC%A0%E6%8E%A5%E5%8F%A3%E5%BD%A2%E5%BC%8F"><span class="toc-text">1.2 上传接口形式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-3-%E6%95%B0%E6%8D%AE%E5%BA%93%E8%AE%BE%E7%BD%AE"><span class="toc-text">1.3 数据库设置</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#2-js-log-report%E7%9A%84%E4%B8%BB%E8%A6%81%E6%B5%81%E7%A8%8B"><span class="toc-text">2. js-log-report的主要流程</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#2-1-%E8%87%AA%E5%B7%B1%E5%B0%81%E8%A3%85%E7%9A%84ajax%E5%BA%93"><span class="toc-text">2.1 自己封装的ajax库</span></a></li></ol></li></ol>
+        
+    </div>
+</aside>
+                
+            </div>
+        </div>
+    </section>
+    <footer class="main-footer">
+    <div class="container">
+        <div class="row">
+        </div>
+    </div>
+</footer>
+<a id="back-to-top" class="icon-btn hide">
+    <i class="fa fa-chevron-up"></i>
+</a>
+    <div class="copyright">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="busuanzi">
+    
+    访问量:
+    <strong id="busuanzi_value_site_pv">
+        <i class="fa fa-spinner fa-spin"></i>
+    </strong>
+    &nbsp; | &nbsp;
+    访客数:
+    <strong id="busuanzi_value_site_uv">
+        <i class="fa fa-spinner fa-spin"></i>
+    </strong>
+    
+</div>
+            </div>
+            <div class="col-sm-12">
+                <span>Copyright &copy;
+                    2021
+                    
+                </span> |
+                <span>
+                    Powered by <a href="//hexo.io" class="copyright-links" target="_blank" rel="nofollow">Hexo</a>
+                </span> |
+                <span>
+                    Theme by <a href="//github.com/shenliyang/hexo-theme-snippet.git" class="copyright-links" target="_blank" rel="nofollow">Snippet</a>
+                </span>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+<script src="/js/app.js?rev=@@hash.js"></script>
+
+</body>
+</html>
