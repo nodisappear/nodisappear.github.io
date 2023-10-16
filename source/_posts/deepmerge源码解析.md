@@ -2,9 +2,9 @@
 title: deepmerge源码解析
 categories: 技术
 tags:
-  - 源码
+  - 源码解析
 comments: true
-author: Lzb
+author: 李泽滨
 abbrlink: a519f8f
 date: 2021-10-08 16:45:41
 ---

@@ -40,7 +40,7 @@ carousel:
 ## widgets
 widgets:
   - search
-  # - notification
+  - notification
   - category
   - tagcloud
   - archive
@@ -63,7 +63,6 @@ notification: |-
   <p>
       主题下载：<a href="https://github.com/shenliyang/hexo-theme-snippet" title="fork me" target="_blank">Snippet主题</a> <br/>
       主题使用：<a href="https://github.com/shenliyang/hexo-theme-snippet/blob/master/README.md#常见问题" title="" target="_blank">常见使用问题</a> <br/>
-      支持主题：<a href="https://github.com/shenliyang/hexo-theme-snippet/stargazers">Star一下</a>
   </p>
 
 ## 社交设置
@@ -122,10 +121,17 @@ homePanel: false
 
 ## 缩略图自定义随机图片
 defaultImgs:
-  ["./img/default (1).jpg", "./img/default (2).jpg", "./img/default (3).jpg", "./img/default (4).jpg", "./img/default (5).jpg", "./img/default (6).jpg",
-   "./img/default (7).jpg", "./img/default (8).jpg", "./img/default (9).jpg", "./img/default (10).jpg", "./img/default (11).jpg",
-   "./img/default (12).jpg", "./img/default (13).jpg", "./img/default (14).jpg", "./img/default (15).jpg", "./img/default (16).jpg",
-   "./img/default (17).jpg", "./img/default (18).jpg", "./img/default (19).jpg"
+  [
+    "static/1.jpg",
+    "static/2.jpg",
+    "static/3.jpg",
+    "static/4.jpg",
+    "static/5.jpg",
+    "static/6.jpg",
+    "static/7.jpg",
+    "static/9.jpg",
+    "static/微信图片_20231017002605.jpg",
+    "static/微信图片_20231017002634.jpg"
   ]
 
 ## 截取文章首页描述字数
@@ -145,7 +151,7 @@ fontAwesome:
 
 ## 文章过期提醒功能
 warning:
-  days: 300
+  days: 3650
   text: "本文于%d天之前发表，文中内容可能已经过时。"
 
 ## 文章内声明
@@ -175,11 +181,11 @@ utterances:
 
 ## Valine评论
 valine:
-  enable: false
+  enable: true
   appId: xOKV9J4UeQAtVkvnJC7Kq2Jn-gzGzoHsz
   appKey: erIpQac4azoCmgfBB7Dl9maa
   placeholder: 说点什么吧
-  notify: false
+  notify: true
   verify: true
   avatar: mm
   meta: nick,mail
@@ -235,7 +241,7 @@ visit_counter:
 ## 网站访问统计分析
 
 ### 网盟CNZZ统计
-cnzz_analytics: 1263868967
+cnzz_analytics:
 
 ### 百度统计
 baidu_analytics:

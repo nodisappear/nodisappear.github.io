@@ -2,7 +2,7 @@
 title: 读《JavaScript设计模式核心原理与应用实践》
 categories: 技术
 tags: 笔记
-author: Zyx
+author: 张雅娴
 abbrlink: 806a46bc
 date: 2021-11-03 16:18:10
 ---

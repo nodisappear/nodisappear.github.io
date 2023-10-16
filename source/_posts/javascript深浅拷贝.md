@@ -1,10 +1,10 @@
 ---
-title: 深浅拷贝
-categories: 技术
+title: javascript深浅拷贝
+categories: 编程语言
 tags: 知识点
 abbrlink: ad2c1b4b
 date: 2021-12-04 10:32:31
-author: Zyx
+author: 张雅娴
 ---
 
 ### 生成指定深度和广度的对象
