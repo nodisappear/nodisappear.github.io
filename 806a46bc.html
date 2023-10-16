@@ -56,13 +56,6 @@
 <link rel="stylesheet" href="/css/style.css?rev=@@hash.css">
 
     
-<div class="hide">
-    <script type="text/javascript">
-    var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");
-    document.write(unescape("%3Cspan class='cnzz_stat_icon_1263868967 hide' %3E%3Cscript%20src%3D%22https%3A%2F%2Fs95.cnzz.com%2Fz_stat.php%3Fweb_id%3D1272564536%22%3E%3C%2Fscript%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s19.cnzz.com/z_stat.php%3Fid%3D1263868967%26show%3Dpic1' type='text/javascript'%3E%3C/script%3E"));
-    </script>
-</div>
-
 
 
 
@@ -386,10 +379,10 @@
 </article>
 <div class="article-nav prev-next-wrap clearfix">
     
-    <a href="/ad2c1b4b.html" class="pre-post btn btn-default" title='深浅拷贝'>
+    <a href="/ad2c1b4b.html" class="pre-post btn btn-default" title='javascript深浅拷贝'>
         <i class="fa fa-angle-left fa-fw"></i><span class="hidden-lg">上一篇</span>
         <span class="hidden-xs">
-            深浅拷贝</span>
+            javascript深浅拷贝</span>
     </a>
     
     
@@ -404,20 +397,27 @@
 <div id="comments">
     
     
-<div class="utteranc">
-  
-  <script
-    src='https://utteranc.es/client.js'
-    repo='nodisappear/XinAnXiaoZhan'
-    issue-term='pathname'
-    issue-number=''
-    theme='github-light'
-    label=''
-    crossorigin='anonymous'
-    async
-  ></script>
-</div>
+<div id="vcomments" class="valine"></div>
 
+<script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+<script src="/assets/valine.min.js"></script>
+
+<script>
+    new Valine({
+        av: AV,
+        el: '#vcomments',
+        appId: 'xOKV9J4UeQAtVkvnJC7Kq2Jn-gzGzoHsz',
+        appKey: 'erIpQac4azoCmgfBB7Dl9maa',
+        placeholder: '说点什么吧',
+        notify: true,
+        verify: true,
+        avatar: 'mm',
+        meta: 'nick,mail'.split(','),
+        pageSize: '10',
+        path: window.location.pathname,
+        lang: 'zh-CN'.toLowerCase()
+    })
+    </script>
 
 
 </div>
@@ -452,7 +452,7 @@
         <div class="row">
             <div class="col-sm-12">
                 <div class="busuanzi">
-    
+    <!-- 
     访问量:
     <strong id="busuanzi_value_site_pv">
         <i class="fa fa-spinner fa-spin"></i>
@@ -462,7 +462,7 @@
     <strong id="busuanzi_value_site_uv">
         <i class="fa fa-spinner fa-spin"></i>
     </strong>
-    
+     -->
 </div>
             </div>
             <div class="col-sm-12">
