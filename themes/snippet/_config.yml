@@ -69,7 +69,7 @@ notification: |-
 social:
   - name: Github
     icon: git
-    href: //github.com/nodisappear
+    href: //github.com/LiZeB
   - name: 163邮箱
     icon: envelope-o
     href: mailto:sygylzb@163.com
