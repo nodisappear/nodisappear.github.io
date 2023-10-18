@@ -172,7 +172,7 @@ reward:
 ## utterances评论
 utterances:
   enable: true
-  repo: nodisappear/XinAnXiaoZhan
+  repo: LiZeB/hexotalks
   issueTerm: pathname
   issueNumber: 
   theme: github-light
