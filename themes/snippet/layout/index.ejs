@@ -6,8 +6,6 @@
 </div>
 <% } %> -->
 <% if(page.posts && page.posts.length){ %>
-<% console.log(Object.keys(page.posts.data[0])) %>
-<% console.log(page.posts.data[0].img) %>
 <% page.posts.forEach(function (post, i) { %>
 <%
     var urls = lazyImage(post);
