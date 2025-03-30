@@ -119,21 +119,6 @@ banner:
 ## 首页列表底部面板
 homePanel: false
 
-## 缩略图自定义随机图片
-defaultImgs:
-  [
-    "static/1.jpg",
-    "static/2.jpg",
-    "static/3.jpg",
-    "static/4.jpg",
-    "static/5.jpg",
-    "static/6.jpg",
-    "static/7.jpg",
-    "static/9.jpg",
-    "static/微信图片_20231017002605.jpg",
-    "static/微信图片_20231017002634.jpg"
-  ]
-
 ## 截取文章首页描述字数
 excerptLength: 248
 

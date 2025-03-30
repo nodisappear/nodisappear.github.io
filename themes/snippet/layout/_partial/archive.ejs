@@ -2,11 +2,6 @@
 <%
     var urls = lazyImage(post);
     var random = Math.floor(Math.random() * (urls.length));
-    if(theme.defaultImgs && theme.defaultImgs.length >0){ 
-        var urls2 = theme.defaultImgs;
-        var random2 = Math.floor(Math.random() * (urls2.length));
-    }
-    <!-- var _photoUrl = post.img || (urls.length > 0 && urls[random]) || (urls2.length > 0 && urls2[random2]) || ''; -->
     var _photoUrl = post.img || (urls2.length > 0 && urls2[random2]) || '';
 %>
 <a href="<%- url_for(post.path) %>" class="article-container-href">

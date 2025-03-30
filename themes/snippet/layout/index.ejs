@@ -10,12 +10,7 @@
 <%
     var urls = lazyImage(post);
     var random = Math.floor(Math.random() * (urls.length));
-    if(theme.defaultImgs && theme.defaultImgs.length >0){ 
-        var urls2 = theme.defaultImgs;
-        var random2 = Math.floor(Math.random() * (urls2.length));
-    }
-    <!-- var _photoUrl = post.img || (urls.length > 0 && urls[random]) || (urls2.length > 0 && urls2[random2]) || ''; -->
-    var _photoUrl = post.img || (urls2.length > 0 && urls2[random2]) || '';
+    var _photoUrl = post.img;
 %>
 <a href="<%- url_for(post.path) %>" class="article-container-href">
     <article class="post">
@@ -37,7 +32,7 @@
                 <%= truncate(strip_html(post.content), {length: theme.excerptLength || 120, separator: ''}) %>
                 <% } %>
             </p>
-            <div class="post-meta"> <!-- &bull; -->
+            <div class="post-meta">
                 <% if(!is_category()){ %>
                 <span class="categories-meta fa-wrap">
                     <i class="fa fa-folder-open-o"></i>
@@ -70,7 +65,7 @@
                     <span> , Write By <%- post.author %></span>
                 <% } %>
             </div>
-            <a class="article-container-href read-btn btn btn-default" href="<%- url_for(post.path) %>">阅读全文</a>
+            <!-- <a class="article-container-href read-btn btn btn-default" href="<%- url_for(post.path) %>">阅读全文</a> -->
         </div>
         <% if(theme.homePanel) { %>
         <footer class="post-footer clearfix">
