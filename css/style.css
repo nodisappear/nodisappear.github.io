@@ -29,14 +29,14 @@
 html {
   color: #505050;
   line-height: 1.75em;
-  background: #ebebeb;
+  background: #F7F7F7;
   position: relative;
   font-family: "Helvetica Neue", Helvetica, Arial, "Hiragino Sans GB", "Hiragino Sans GB W3", "WenQuanYi Micro Hei", "Microsoft YaHei UI", "Microsoft YaHei", sans-serif;
 }
 body {
   color: #505050;
   line-height: 1.75em;
-  background: #ebebeb;
+  background: #F7F7F7;
   position: relative;
   font-family: "Helvetica Neue", Helvetica, Arial, "Hiragino Sans GB", "Hiragino Sans GB W3", "WenQuanYi Micro Hei", "Microsoft YaHei UI", "Microsoft YaHei", sans-serif;
 }
@@ -397,6 +397,14 @@ pre {
   margin-bottom: 15px;
   position: relative;
   overflow: hidden;
+  box-shadow: 
+  /* 底部深阴影（模拟立体投影） */
+  0 4px 8px rgba(0, 0, 0, 0.1),
+  /* 中层过渡阴影 */
+  0 8px 16px rgba(0, 0, 0, 0.08),
+  /* 顶部浅内阴影（增强边缘立体感） */
+  inset 0 2px 2px rgba(255, 255, 255, 0.5);
+  transition: box-shadow 0.3s ease;  /* 悬停动效 */
 }
 .post .featured {
   position: absolute;
@@ -453,7 +461,7 @@ pre {
 }
 .post .post-content .read-btn {
   position: absolute;
-  bottom: 18px;
+  bottom: 8px;
   right: 40px;
 }
 .post .post-media {
@@ -466,7 +474,7 @@ pre {
 }
 .post .post-media img {
   width: 100%;
-  height: 100%;
+  height: 84%;
 }
 .post .post-content .home-post-head {
   text-align: left;
@@ -480,8 +488,8 @@ pre {
   color: #817c7c;
   font-family: "Helvetica Neue",Helvetica,Arial,"Hiragino Sans GB","Hiragino Sans GB W3","WenQuanYi Micro Hei","Microsoft YaHei UI","Microsoft YaHei",sans-serif;
   position: absolute;
-  bottom: 12px;
-  left: 256px;
+  bottom: 7px;
+  left: 20px;
 }
 .post .post-content .post-meta .post-date{
   margin-left: 16px;
@@ -882,6 +890,14 @@ pre {
 .sidebar .widget {
   background: #fff;
   padding: 16px 25px;
+  box-shadow: 
+  /* 底部深阴影（模拟立体投影） */
+  0 4px 8px rgba(0, 0, 0, 0.1),
+  /* 中层过渡阴影 */
+  0 8px 16px rgba(0, 0, 0, 0.08),
+  /* 顶部浅内阴影（增强边缘立体感） */
+  inset 0 2px 2px rgba(255, 255, 255, 0.5);
+  transition: box-shadow 0.3s ease;  /* 悬停动效 */
 }
 .sidebar .widget:nth-last-child(1) {
   height: 305px;
@@ -1102,6 +1118,14 @@ pre {
   bottom: 70px;
   overflow-y: auto;
   height: 953px;
+  box-shadow: 
+  /* 底部深阴影（模拟立体投影） */
+  0 4px 8px rgba(0, 0, 0, 0.1),
+  /* 中层过渡阴影 */
+  0 8px 16px rgba(0, 0, 0, 0.08),
+  /* 顶部浅内阴影（增强边缘立体感） */
+  inset 0 2px 2px rgba(255, 255, 255, 0.5);
+  transition: box-shadow 0.3s ease;  /* 悬停动效 */
 }
 #article-toc ol {
   list-style: none;
